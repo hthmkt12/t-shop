@@ -3,77 +3,104 @@ import { FOOTER_QUERY, HEADER_QUERY, SETTINGS_QUERY } from '../_graphql/globals'
 import { GRAPHQL_API_URL } from './shared'
 
 export async function fetchSettings(): Promise<Settings> {
-  if (!process.env.NEXT_PUBLIC_SERVER_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!process.env.NEXT_PUBLIC_SERVER_URL && !process.env.NEXT_BUILD) {
+    throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  }
 
-  const settings = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-    body: JSON.stringify({
-      query: SETTINGS_QUERY,
-    }),
-  })
-    ?.then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
+  try {
+    const settings = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      body: JSON.stringify({
+        query: SETTINGS_QUERY,
+      }),
     })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching settings')
-      return res.data?.Settings
-    })
+      ?.then(res => {
+        if (!res.ok) throw new Error('Error fetching doc')
+        return res.json()
+      })
+      ?.then(res => {
+        if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching settings')
+        return res.data?.Settings
+      })
 
-  return settings
+    return settings
+  } catch (error: unknown) {
+    if (process.env.NEXT_BUILD) {
+      return null as unknown as Settings
+    }
+    throw error
+  }
 }
 
 export async function fetchHeader(): Promise<Header> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!GRAPHQL_API_URL && !process.env.NEXT_BUILD) {
+    throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  }
 
-  const header = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-    body: JSON.stringify({
-      query: HEADER_QUERY,
-    }),
-  })
-    ?.then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
+  try {
+    const header = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+      body: JSON.stringify({
+        query: HEADER_QUERY,
+      }),
     })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching header')
-      return res.data?.Header
-    })
+      ?.then(res => {
+        if (!res.ok) throw new Error('Error fetching doc')
+        return res.json()
+      })
+      ?.then(res => {
+        if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching header')
+        return res.data?.Header
+      })
 
-  return header
+    return header
+  } catch (error: unknown) {
+    if (process.env.NEXT_BUILD) {
+      return null as unknown as Header
+    }
+    throw error
+  }
 }
 
 export async function fetchFooter(): Promise<Footer> {
-  if (!GRAPHQL_API_URL) throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  if (!GRAPHQL_API_URL && !process.env.NEXT_BUILD) {
+    throw new Error('NEXT_PUBLIC_SERVER_URL not found')
+  }
 
-  const footer = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: FOOTER_QUERY,
-    }),
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('Error fetching doc')
-      return res.json()
+  try {
+    const footer = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: FOOTER_QUERY,
+      }),
     })
-    ?.then(res => {
-      if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching footer')
-      return res.data?.Footer
-    })
+      .then(res => {
+        if (!res.ok) throw new Error('Error fetching doc')
+        return res.json()
+      })
+      ?.then(res => {
+        if (res?.errors) throw new Error(res?.errors[0]?.message || 'Error fetching footer')
+        return res.data?.Footer
+      })
 
-  return footer
+    return footer
+  } catch (error: unknown) {
+    if (process.env.NEXT_BUILD) {
+      return null as unknown as Footer
+    }
+    throw error
+  }
 }
 
 export const fetchGlobals = async (): Promise<{

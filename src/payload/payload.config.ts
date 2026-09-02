@@ -29,6 +29,7 @@ import { trackOrder } from './endpoints/track-order'
 import { Footer } from './globals/Footer'
 import { Header } from './globals/Header'
 import { Settings } from './globals/Settings'
+import { paymentIntentSucceeded } from './stripe/webhooks/paymentIntentSucceeded'
 import { priceUpdated } from './stripe/webhooks/priceUpdated'
 import { productUpdated } from './stripe/webhooks/productUpdated'
 
@@ -91,6 +92,22 @@ export default buildConfig({
   }),
   // database-adapter-config-end
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
+  ...(process.env.SMTP_HOST
+    ? {
+        email: {
+          fromName: process.env.SMTP_FROM_NAME || 'T-Shop POD',
+          fromAddress: process.env.SMTP_FROM_ADDRESS || 'orders@t-shop.com',
+          transportOptions: {
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT || 587),
+            auth: {
+              user: process.env.SMTP_USER || '',
+              pass: process.env.SMTP_PASS || '',
+            },
+          },
+        },
+      }
+    : {}),
   collections: [Pages, Products, Orders, Media, Categories, Users],
   globals: [Settings, Header, Footer],
   typescript: {
@@ -144,6 +161,7 @@ export default buildConfig({
         'product.created': productUpdated,
         'product.updated': productUpdated,
         'price.updated': priceUpdated,
+        'payment_intent.succeeded': paymentIntentSucceeded,
       },
     }),
     redirects({
@@ -174,6 +192,17 @@ export default buildConfig({
                   },
                   bucket: process.env.S3_BUCKET,
                 }),
+                generateFileURL: ({ filename }) => {
+                  if (process.env.S3_PUBLIC_DOMAIN) {
+                    return `${process.env.S3_PUBLIC_DOMAIN.replace(/\/$/, '')}/${filename}`
+                  }
+                  if (process.env.S3_ENDPOINT && process.env.S3_BUCKET) {
+                    return `${process.env.S3_ENDPOINT.replace(/\/$/, '')}/${
+                      process.env.S3_BUCKET
+                    }/${filename}`
+                  }
+                  return `/media/${filename}`
+                },
               },
             },
           }),

@@ -6,6 +6,7 @@ import { adminsOrOrderedBy } from './access/adminsOrOrderedBy'
 import { clearUserCart } from './hooks/clearUserCart'
 import { populateOrderedBy } from './hooks/populateOrderedBy'
 import { recalculateTotal } from './hooks/recalculateTotal'
+import { sendOrderConfirmationEmail } from './hooks/sendOrderConfirmationEmail'
 import { updateProductStock } from './hooks/updateProductStock'
 import { updateUserPurchases } from './hooks/updateUserPurchases'
 import { LinkToPaymentIntent } from './ui/LinkToPaymentIntent'
@@ -20,7 +21,12 @@ export const Orders: CollectionConfig = {
   },
   hooks: {
     beforeChange: [recalculateTotal],
-    afterChange: [updateUserPurchases, clearUserCart, updateProductStock],
+    afterChange: [
+      updateUserPurchases,
+      clearUserCart,
+      updateProductStock,
+      sendOrderConfirmationEmail,
+    ],
   },
   access: {
     read: adminsOrOrderedBy,

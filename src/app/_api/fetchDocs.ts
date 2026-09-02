@@ -40,24 +40,34 @@ export const fetchDocs = async <T>(
     token = cookies().get(payloadToken)
   }
 
-  const docs: T[] = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
-    },
-    cache: 'no-store',
-    next: { tags: [collection] },
-    body: JSON.stringify({
-      query: queryMap[collection].query,
-    }),
-  })
-    ?.then(res => res.json())
-    ?.then(res => {
-      if (res.errors) throw new Error(res?.errors?.[0]?.message ?? 'Error fetching docs')
-
-      return res?.data?.[queryMap[collection].key]?.docs
+  try {
+    const docs: T[] = await fetch(`${GRAPHQL_API_URL}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token?.value && draft ? { Authorization: `JWT ${token.value}` } : {}),
+      },
+      cache: 'no-store',
+      next: { tags: [collection] },
+      body: JSON.stringify({
+        query: queryMap[collection].query,
+      }),
     })
+      ?.then(res => {
+        if (!res.ok) throw new Error('Error fetching docs')
+        return res.json()
+      })
+      ?.then(res => {
+        if (res.errors) throw new Error(res?.errors?.[0]?.message ?? 'Error fetching docs')
 
-  return docs
+        return res?.data?.[queryMap[collection].key]?.docs
+      })
+
+    return docs
+  } catch (error: unknown) {
+    if (process.env.NEXT_BUILD) {
+      return [] as T[]
+    }
+    throw error
+  }
 }

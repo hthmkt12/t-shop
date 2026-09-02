@@ -5,13 +5,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: t-shop-pod:staging
     restart: always
     ports:
       - '3000:3000'
-    env_file:
-      - .env.production
+    environment:
+      PORT: 3000
+      PAYLOAD_PUBLIC_SERVER_URL: http://localhost:3000
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      DATABASE_URI: mongodb://mongo:27017/payload-template-ecommerce
+      PAYLOAD_SECRET: staging_super_secret_payload_key_2026_pod
+      PAYLOAD_PUBLIC_DRAFT_SECRET: staging_draft_secret_key
+      NEXT_PRIVATE_DRAFT_SECRET: staging_draft_secret_key
+      REVALIDATION_KEY: staging_revalidation_key
+      NEXT_PRIVATE_REVALIDATION_KEY: staging_revalidation_key
+      NEXT_PUBLIC_IS_LIVE: 'false'
     volumes:
-      - media_data:/home/node/app/media
+      - media_data:/app/media
     depends_on:
       - mongo
 
@@ -26,3 +36,4 @@ services:
 volumes:
   mongo_data:
   media_data:
+
