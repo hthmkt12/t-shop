@@ -53,3 +53,53 @@
   padding-bottom: 16px;
   border-bottom: 1px solid var(--color-dark-50);
 }
+
+.orderBumpCard {
+  margin: 8px 0;
+  padding: 16px;
+  background: var(--pod-primary-50, #f6f3ff);
+  border: 1.5px dashed var(--theme-brand, #6c4cf1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .bumpHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    span {
+      font-size: 1.4rem;
+    }
+
+    strong {
+      font-size: 0.95rem;
+      color: var(--color-dark-900, #131118);
+    }
+
+    p {
+      margin: 2px 0 0 0;
+      font-size: 0.8rem;
+      color: var(--color-dark-500, #718096);
+    }
+  }
+
+  .bumpAddBtn {
+    width: 100%;
+    padding: 10px;
+    background: var(--theme-brand, #6c4cf1);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--pod-accent-500, #5639d6);
+      transform: translateY(-1px);
+    }
+  }
+}

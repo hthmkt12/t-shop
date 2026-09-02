@@ -122,6 +122,37 @@ export const CartPage: React.FC<{
                   <p className={classes.cartTotal}>{cartTotal.formatted}</p>
                 </div>
 
+                {/* POD Order Bump / Cross-sell Accent Box */}
+                <div className={classes.orderBumpCard}>
+                  <div className={classes.bumpHeader}>
+                    <span>🎁</span>
+                    <div>
+                      <strong>Add Eco Canvas Tote Bag?</strong>
+                      <p>Complete your bundle for just +$22.00</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={classes.bumpAddBtn}
+                    onClick={() => {
+                      addItemToCart({
+                        product: {
+                          id: 'pod-tote-upsell',
+                          title: 'Eco-Friendly Heavy Canvas Tote Bag',
+                          priceJSON: JSON.stringify([{ unit_amount: 2200 }]),
+                          slug: 'heavy-canvas-tote-bag',
+                          enableVariants: false,
+                        } as any,
+                        quantity: 1,
+                        sku: 'TOTE-NATURAL-BUMP',
+                        variantTitle: 'Natural Canvas (Special Bundle)',
+                      } as any)
+                    }}
+                  >
+                    + Add to Cart (+$22)
+                  </button>
+                </div>
+
                 <Button
                   className={classes.checkoutButton}
                   href={user ? '/checkout' : '/login?redirect=%2Fcheckout'}

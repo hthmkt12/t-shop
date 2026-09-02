@@ -11,8 +11,11 @@ export type CustomDesignData = {
   artworkName?: string
   scale: number
   rotation: number
+  positionX?: number
+  positionY?: number
   customText?: string
   textColor: string
+  activeSide?: 'front' | 'back'
 }
 
 type Props = {
@@ -31,8 +34,13 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [scale, setScale] = useState<number>(100)
   const [rotation, setRotation] = useState<number>(0)
+  const [posX, setPosX] = useState<number>(0)
+  const [posY, setPosY] = useState<number>(0)
+  const [activeSide, setActiveSide] = useState<'front' | 'back'>('front')
   const [customText, setCustomText] = useState<string>('')
   const [textColor, setTextColor] = useState<string>('#131118')
+  const [isDragging, setIsDragging] = useState<boolean>(false)
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const updateParent = (
     nextUrl: string | null,
@@ -41,6 +49,9 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     nextRot: number,
     nextText: string,
     nextColor: string,
+    nextPosX: number = posX,
+    nextPosY: number = posY,
+    nextSide: 'front' | 'back' = activeSide,
   ) => {
     if (!onDesignChange) return
     if (!nextUrl && !nextText.trim()) {
@@ -64,8 +75,11 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
       artworkName: nextName || undefined,
       scale: nextScale,
       rotation: nextRot,
+      positionX: nextPosX,
+      positionY: nextPosY,
       customText: nextText.trim() || undefined,
       textColor: nextColor,
+      activeSide: nextSide,
     })
   }
 
@@ -114,27 +128,65 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     setArtworkUrl(null)
     setArtworkName('')
     setUploadError(null)
-    updateParent(null, '', scale, rotation, customText, textColor)
+    setPosX(0)
+    setPosY(0)
+    updateParent(null, '', scale, rotation, customText, textColor, 0, 0, activeSide)
   }
 
   const handleScaleChange = (val: number) => {
     setScale(val)
-    updateParent(artworkUrl, artworkName, val, rotation, customText, textColor)
+    updateParent(artworkUrl, artworkName, val, rotation, customText, textColor, posX, posY, activeSide)
   }
 
   const handleRotationChange = (val: number) => {
     setRotation(val)
-    updateParent(artworkUrl, artworkName, scale, val, customText, textColor)
+    updateParent(artworkUrl, artworkName, scale, val, customText, textColor, posX, posY, activeSide)
   }
 
   const handleTextChange = (text: string) => {
     setCustomText(text)
-    updateParent(artworkUrl, artworkName, scale, rotation, text, textColor)
+    updateParent(artworkUrl, artworkName, scale, rotation, text, textColor, posX, posY, activeSide)
   }
 
   const handleColorChange = (color: string) => {
     setTextColor(color)
-    updateParent(artworkUrl, artworkName, scale, rotation, customText, color)
+    updateParent(artworkUrl, artworkName, scale, rotation, customText, color, posX, posY, activeSide)
+  }
+
+  const handleSideToggle = (side: 'front' | 'back') => {
+    setActiveSide(side)
+    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, posX, posY, side)
+  }
+
+  // Pointer / Touch Drag Handler for Artwork Placement
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!artworkUrl && !customText) return
+    setIsDragging(true)
+    setDragStart({ x: e.clientX - posX, y: e.clientY - posY })
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return
+    const newX = Math.max(-60, Math.min(60, e.clientX - dragStart.x))
+    const newY = Math.max(-60, Math.min(60, e.clientY - dragStart.y))
+    setPosX(newX)
+    setPosY(newY)
+  }
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDragging) return
+    setIsDragging(false)
+    try {
+      ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+    } catch {}
+    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, posX, posY, activeSide)
+  }
+
+  const handleResetPosition = () => {
+    setPosX(0)
+    setPosY(0)
+    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, 0, 0, activeSide)
   }
 
   const metaImage = product?.meta?.image as Media | undefined
@@ -147,7 +199,29 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
         <h5>
           <span>🎨</span> Live POD Mockup Customizer
         </h5>
-        <span className={classes.badge}>Custom Print</span>
+        <div className={classes.headerActions}>
+          <div className={classes.sideToggleGroup}>
+            <button
+              type="button"
+              className={[classes.sideBtn, activeSide === 'front' && classes.activeSide]
+                .filter(Boolean)
+                .join(' ')}
+              onClick={() => handleSideToggle('front')}
+            >
+              Front Side
+            </button>
+            <button
+              type="button"
+              className={[classes.sideBtn, activeSide === 'back' && classes.activeSide]
+                .filter(Boolean)
+                .join(' ')}
+              onClick={() => handleSideToggle('back')}
+            >
+              Back Side
+            </button>
+          </div>
+          <span className={classes.badge}>Custom Print</span>
+        </div>
       </div>
 
       <div className={classes.stageContainer}>
@@ -161,16 +235,29 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
             </div>
           )}
 
-          {/* Printable Design Area */}
-          <div className={classes.printAreaBox}>
+          {/* Printable Design Area with Drag Support */}
+          <div
+            className={[classes.printAreaBox, (artworkUrl || customText) && classes.interactiveArea]
+              .filter(Boolean)
+              .join(' ')}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            style={{
+              cursor: artworkUrl || customText ? (isDragging ? 'grabbing' : 'grab') : 'default',
+              touchAction: 'none',
+            }}
+          >
             {artworkUrl && (
               <img
                 src={artworkUrl}
                 alt="Uploaded Artwork"
                 className={classes.uploadedImage}
                 style={{
-                  transform: `scale(${scale / 100}) rotate(${rotation}deg)`,
+                  transform: `translate3d(${posX}px, ${posY}px, 0) scale(${scale / 100}) rotate(${rotation}deg)`,
                 }}
+                draggable={false}
               />
             )}
             {customText && (
@@ -179,6 +266,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                 style={{
                   color: textColor,
                   fontSize: `${Math.max(12, Math.round((scale / 100) * 16))}px`,
+                  transform: `translate3d(${posX}px, ${posY}px, 0)`,
                 }}
               >
                 {customText}
@@ -192,7 +280,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                   textAlign: 'center',
                 }}
               >
-                Print Area
+                Print Area ({activeSide})
               </span>
             )}
           </div>
@@ -200,6 +288,14 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
 
         {/* Customization Controls */}
         <div className={classes.controlsPanel}>
+          {(posX !== 0 || posY !== 0) && (
+            <div className={classes.dragStatusNotice}>
+              <span>✋ Dragged: X: {posX}px, Y: {posY}px</span>
+              <button type="button" onClick={handleResetPosition} className={classes.resetPosBtn}>
+                Reset Center
+              </button>
+            </div>
+          )}
           <div className={classes.controlGroup}>
             <label>1. Upload Artwork / Design (PNG/JPG)</label>
             <div className={classes.uploadBtnRow}>

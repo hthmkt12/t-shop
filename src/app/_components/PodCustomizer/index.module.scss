@@ -16,6 +16,8 @@
   align-items: center;
   border-bottom: 1px solid var(--theme-card-border);
   padding-bottom: var(--pod-space-3);
+  flex-wrap: wrap;
+  gap: var(--pod-space-2);
 
   h5 {
     margin: 0;
@@ -25,6 +27,42 @@
     display: flex;
     align-items: center;
     gap: var(--pod-space-2);
+  }
+
+  .headerActions {
+    display: flex;
+    align-items: center;
+    gap: var(--pod-space-3);
+  }
+
+  .sideToggleGroup {
+    display: flex;
+    background: var(--pod-surface);
+    padding: 2px;
+    border-radius: var(--pod-radius-sm);
+    border: 1px solid var(--theme-card-border);
+  }
+
+  .sideBtn {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    border-radius: var(--pod-radius-xs);
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: var(--theme-text);
+    }
+
+    &.activeSide {
+      background: var(--theme-surface-raised);
+      color: var(--theme-brand);
+      box-shadow: var(--pod-shadow-sm);
+    }
   }
 
   .badge {
@@ -97,6 +135,39 @@
   overflow: hidden;
   background: rgba(108, 76, 241, 0.04);
   pointer-events: none;
+  touch-action: none;
+  user-select: none;
+
+  &.interactiveArea {
+    pointer-events: auto;
+  }
+}
+
+.dragStatusNotice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: var(--pod-primary-50);
+  border: 1px solid var(--pod-primary-100);
+  border-radius: var(--pod-radius-sm);
+  font-size: 0.8rem;
+  color: var(--theme-brand);
+  font-weight: 500;
+
+  .resetPosBtn {
+    background: none;
+    border: none;
+    color: var(--pod-accent-500);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--theme-brand);
+    }
+  }
 }
 
 .uploadedImage {
