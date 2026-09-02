@@ -16,6 +16,8 @@ export const AddToCartButton: React.FC<{
   appearance?: Props['appearance']
   sku?: string
   variantTitle?: string
+  customDesignUrl?: string
+  customText?: string
   disabled?: boolean
 }> = props => {
   const {
@@ -25,6 +27,8 @@ export const AddToCartButton: React.FC<{
     appearance = 'primary',
     sku,
     variantTitle,
+    customDesignUrl,
+    customText,
     disabled = false,
   } = props
 
@@ -61,6 +65,8 @@ export const AddToCartButton: React.FC<{
                 quantity,
                 sku,
                 variantTitle,
+                customDesignUrl,
+                customText,
               } as any)
 
               router.push('/cart')

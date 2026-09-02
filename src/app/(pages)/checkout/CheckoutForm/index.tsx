@@ -82,13 +82,16 @@ export const CheckoutForm: React.FC<{}> = () => {
                 // `recalculateTotal` beforeChange hook, so sending it here is redundant
                 // (and untrusted).
                 items: (cart?.items || [])?.map(item => {
-                  const { product, quantity, sku, variantTitle } = item as any
+                  const { product, quantity, sku, variantTitle, customDesignUrl, customText } =
+                    item as any
 
                   return {
                     product: typeof product === 'string' ? product : product?.id,
                     quantity,
                     sku: sku || undefined,
                     variantTitle: variantTitle || undefined,
+                    customDesignUrl: customDesignUrl || undefined,
+                    customText: customText || undefined,
                   }
                 }),
               }),

@@ -113,13 +113,56 @@ export default async function Order({ params: { id } }) {
                       <p
                         style={{
                           fontSize: '14px',
-                          color: 'var(--color-dark-500)',
+                          color: 'var(--theme-text-soft)',
                           marginTop: '-4px',
-                          marginBottom: '8px',
+                          marginBottom: '6px',
                         }}
                       >
                         Option: {(item as any)?.variantTitle}{' '}
                         {(item as any)?.sku ? `(${(item as any)?.sku})` : ''}
+                      </p>
+                    )}
+                    {(item as any)?.customDesignUrl && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          marginBottom: '6px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            color: 'var(--theme-brand)',
+                          }}
+                        >
+                          🎨 Custom Print:
+                        </span>
+                        <img
+                          src={(item as any).customDesignUrl}
+                          alt="Custom artwork"
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            objectFit: 'contain',
+                            borderRadius: '4px',
+                            border: '1px solid var(--pod-border)',
+                          }}
+                        />
+                      </div>
+                    )}
+                    {(item as any)?.customText && (
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          color: 'var(--pod-accent-500)',
+                          fontWeight: 600,
+                          marginBottom: '6px',
+                        }}
+                      >
+                        Custom Text: "{(item as any).customText}"
                       </p>
                     )}
                     <p>{`Quantity: ${quantity}`}</p>

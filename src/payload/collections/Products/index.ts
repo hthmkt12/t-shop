@@ -133,6 +133,15 @@ const Products: CollectionConfig = {
               },
             },
             {
+              name: 'enableCustomizer',
+              label: 'Enable Custom Design Upload',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Allow customers to upload artwork and customize this product',
+              },
+            },
+            {
               name: 'enableVariants',
               label: 'Enable Variants',
               type: 'checkbox',

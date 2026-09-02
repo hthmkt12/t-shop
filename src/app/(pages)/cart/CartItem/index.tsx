@@ -10,7 +10,17 @@ import { RemoveFromCartButton } from '../../../_components/RemoveFromCartButton'
 
 import classes from './index.module.scss'
 
-const CartItem = ({ product, title, metaImage, qty, addItemToCart, sku, variantTitle }) => {
+const CartItem = ({
+  product,
+  title,
+  metaImage,
+  qty,
+  addItemToCart,
+  sku,
+  variantTitle,
+  customDesignUrl,
+  customText,
+}) => {
   const [quantity, setQuantity] = useState(qty)
 
   const variantObj = (product as any)?.enableVariants
@@ -22,7 +32,14 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart, sku, variantT
     const updatedQty = quantity > 1 ? quantity - 1 : 1
 
     setQuantity(updatedQty)
-    addItemToCart({ product, quantity: Number(updatedQty), sku, variantTitle })
+    addItemToCart({
+      product,
+      quantity: Number(updatedQty),
+      sku,
+      variantTitle,
+      customDesignUrl,
+      customText,
+    })
   }
 
   const incrementQty = () => {
@@ -30,7 +47,14 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart, sku, variantT
     const updatedQty = quantity + 1
 
     setQuantity(updatedQty)
-    addItemToCart({ product, quantity: Number(updatedQty), sku, variantTitle })
+    addItemToCart({
+      product,
+      quantity: Number(updatedQty),
+      sku,
+      variantTitle,
+      customDesignUrl,
+      customText,
+    })
   }
 
   const enterQty = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +63,14 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart, sku, variantT
     if (updatedQty > maxStock) updatedQty = maxStock
 
     setQuantity(updatedQty)
-    addItemToCart({ product, quantity: Number(updatedQty), sku, variantTitle })
+    addItemToCart({
+      product,
+      quantity: Number(updatedQty),
+      sku,
+      variantTitle,
+      customDesignUrl,
+      customText,
+    })
   }
 
   return (
@@ -55,8 +86,38 @@ const CartItem = ({ product, title, metaImage, qty, addItemToCart, sku, variantT
         <div className={classes.titleWrapper}>
           <h6>{title}</h6>
           {variantTitle && (
-            <p style={{ fontSize: '13px', color: 'var(--color-dark-500)', marginTop: '2px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--theme-text-soft)', marginTop: '2px' }}>
               Option: {variantTitle}
+            </p>
+          )}
+          {customDesignUrl && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-brand)' }}>
+                🎨 Custom Print:
+              </span>
+              <img
+                src={customDesignUrl}
+                alt="Custom print"
+                style={{
+                  width: '22px',
+                  height: '22px',
+                  objectFit: 'contain',
+                  borderRadius: '3px',
+                  border: '1px solid var(--pod-border)',
+                }}
+              />
+            </div>
+          )}
+          {customText && (
+            <p
+              style={{
+                fontSize: '12px',
+                color: 'var(--pod-accent-500)',
+                fontWeight: 600,
+                marginTop: '2px',
+              }}
+            >
+              Text: "{customText}"
             </p>
           )}
           {maxStock < 10 && (

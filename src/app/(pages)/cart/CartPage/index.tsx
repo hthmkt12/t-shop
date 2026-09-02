@@ -83,13 +83,21 @@ export const CartPage: React.FC<{
 
                       return (
                         <CartItem
-                          key={(item as any)?.sku ? `${id}-${(item as any)?.sku}` : id}
+                          key={
+                            (item as any)?.sku
+                              ? `${id}-${(item as any)?.sku}`
+                              : (item as any)?.customText
+                              ? `${id}-${(item as any)?.customText}`
+                              : id
+                          }
                           product={product}
                           title={title}
                           metaImage={metaImage}
                           qty={quantity}
                           sku={(item as any)?.sku}
                           variantTitle={(item as any)?.variantTitle}
+                          customDesignUrl={(item as any)?.customDesignUrl}
+                          customText={(item as any)?.customText}
                           addItemToCart={addItemToCart}
                         />
                       )

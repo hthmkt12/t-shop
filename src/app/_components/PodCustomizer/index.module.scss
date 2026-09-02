@@ -1,0 +1,236 @@
+.customizerWrapper {
+  margin: var(--pod-space-6) 0;
+  padding: var(--pod-space-5);
+  background: var(--theme-surface-raised);
+  border: 1px solid var(--theme-card-border);
+  border-radius: var(--pod-radius-lg);
+  box-shadow: var(--pod-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pod-space-4);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--theme-card-border);
+  padding-bottom: var(--pod-space-3);
+
+  h5 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--theme-text);
+    display: flex;
+    align-items: center;
+    gap: var(--pod-space-2);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: var(--pod-radius-pill);
+    background: var(--pod-accent-50);
+    color: var(--pod-accent-500);
+  }
+}
+
+.stageContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pod-space-5);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.previewStage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--pod-surface);
+  border-radius: var(--pod-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px dashed var(--pod-border);
+}
+
+.mockupBase {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.blankFallback {
+  width: 75%;
+  height: 75%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--pod-radius-md);
+  background: var(--pod-surface-raised);
+  box-shadow: var(--pod-shadow-sm);
+  color: var(--theme-text-muted);
+  font-size: 0.9rem;
+}
+
+.printAreaBox {
+  position: absolute;
+  top: 25%;
+  left: 30%;
+  width: 40%;
+  height: 48%;
+  border: 1.5px dashed var(--theme-brand);
+  border-radius: var(--pod-radius-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(108, 76, 241, 0.04);
+  pointer-events: none;
+}
+
+.uploadedImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.1s ease;
+  user-select: none;
+}
+
+.customTextLayer {
+  margin-top: 6px;
+  font-weight: 700;
+  text-align: center;
+  max-width: 90%;
+  word-break: break-word;
+  line-height: 1.2;
+  user-select: none;
+}
+
+.controlsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pod-space-4);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pod-space-2);
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--theme-text-soft);
+  }
+}
+
+.uploadBtnRow {
+  display: flex;
+  gap: var(--pod-space-2);
+  align-items: center;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pod-space-2);
+  padding: 8px 16px;
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-card-border);
+  border-radius: var(--pod-radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--theme-brand);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--pod-primary-50);
+    border-color: var(--theme-brand);
+  }
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--theme-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--pod-accent-500);
+  }
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: var(--pod-space-3);
+
+  input[type='range'] {
+    flex: 1;
+    accent-color: var(--theme-brand);
+  }
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 45px;
+  }
+}
+
+.textInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--theme-card-border);
+  border-radius: var(--pod-radius-sm);
+  background: var(--theme-input-bg);
+  color: var(--theme-text);
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--theme-brand);
+    box-shadow: 0 0 0 2px var(--pod-primary-100);
+  }
+}
+
+.colorPickerRow {
+  display: flex;
+  gap: var(--pod-space-2);
+  align-items: center;
+}
+
+.textColorDot {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--pod-radius-pill);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &.activeColor {
+    border-color: var(--theme-brand);
+    transform: scale(1.15);
+  }
+}

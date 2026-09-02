@@ -11,6 +11,8 @@ export type CartItems =
       product?: (string | null) | Product;
       sku?: string | null;
       variantTitle?: string | null;
+      customDesignUrl?: string | null;
+      customText?: string | null;
       quantity?: number | null;
       id?: string | null;
     }[]
@@ -293,6 +295,7 @@ export interface Product {
   stripeProductID?: string | null;
   priceJSON?: string | null;
   productType?: ('tshirt' | 'hoodie' | 'mug' | 'tote' | 'poster' | 'sticker' | 'phonecase') | null;
+  enableCustomizer?: boolean | null;
   enableVariants?: boolean | null;
   stock?: number | null;
   variants?:
@@ -423,6 +426,8 @@ export interface Order {
         product: string | Product;
         sku?: string | null;
         variantTitle?: string | null;
+        customDesignUrl?: string | null;
+        customText?: string | null;
         price?: number | null;
         quantity?: number | null;
         id?: string | null;

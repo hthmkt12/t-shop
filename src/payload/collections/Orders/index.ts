@@ -92,6 +92,19 @@ export const Orders: CollectionConfig = {
           type: 'text',
         },
         {
+          name: 'customDesignUrl',
+          label: 'Custom Design / Artwork URL',
+          type: 'text',
+          admin: {
+            description: 'Customer uploaded artwork or preview URL',
+          },
+        },
+        {
+          name: 'customText',
+          label: 'Custom Printed Text',
+          type: 'text',
+        },
+        {
           name: 'price',
           type: 'number',
           min: 0,

@@ -3,6 +3,8 @@ import type { CartItems, Product } from '../../../payload/payload-types'
 export type CartItem = CartItems[0] & {
   sku?: string
   variantTitle?: string
+  customDesignUrl?: string
+  customText?: string
 }
 
 interface CartType {

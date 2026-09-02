@@ -141,6 +141,16 @@ const Users: CollectionConfig = {
               type: 'text',
             },
             {
+              name: 'customDesignUrl',
+              label: 'Custom Design / Artwork URL',
+              type: 'text',
+            },
+            {
+              name: 'customText',
+              label: 'Custom Printed Text',
+              type: 'text',
+            },
+            {
               name: 'quantity',
               type: 'number',
               min: 0,
