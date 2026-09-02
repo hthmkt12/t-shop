@@ -1,6 +1,8 @@
 import { webpackBundler } from '@payloadcms/bundler-webpack' // bundler-import
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
 import { payloadCloud } from '@payloadcms/plugin-cloud'
+import { cloudStorage } from '@payloadcms/plugin-cloud-storage'
+import { s3Adapter } from '@payloadcms/plugin-cloud-storage/s3'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
 import redirects from '@payloadcms/plugin-redirects'
 import seo from '@payloadcms/plugin-seo'
@@ -57,6 +59,12 @@ export default buildConfig({
         ...config,
         resolve: {
           ...config.resolve,
+          fallback: {
+            ...config.resolve?.fallback,
+            fs: false,
+            os: false,
+            util: false,
+          },
           alias: {
             ...config.resolve?.alias,
             dotenv: path.resolve(__dirname, './dotenv.js'),
@@ -149,6 +157,28 @@ export default buildConfig({
       generateTitle,
       uploadsCollection: 'media',
     }),
+    ...(process.env.S3_BUCKET
+      ? [
+          cloudStorage({
+            collections: {
+              media: {
+                adapter: s3Adapter({
+                  config: {
+                    endpoint: process.env.S3_ENDPOINT,
+                    region: process.env.S3_REGION || 'auto',
+                    credentials: {
+                      accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+                      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+                    },
+                    forcePathStyle: Boolean(process.env.S3_FORCE_PATH_STYLE === 'true'),
+                  },
+                  bucket: process.env.S3_BUCKET,
+                }),
+              },
+            },
+          }),
+        ]
+      : []),
     payloadCloud(),
   ],
 })
