@@ -284,5 +284,16 @@ export const seed = async (payload: Payload): Promise<void> => {
     },
   })
 
+  payload.logger.info(`— Seeding admin user...`)
+
+  await payload.create({
+    collection: 'users',
+    data: {
+      email: 'demo@payloadcms.com',
+      password: 'demo',
+      roles: ['admin'],
+    },
+  })
+
   payload.logger.info('Seeded database successfully!')
 }
