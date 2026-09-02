@@ -18,6 +18,10 @@
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,js}\" dist/",
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload generate:types",
     "generate:graphQLSchema": "PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload generate:graphQLSchema",
+    "test:money": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-financial-hook.ts",
+    "test:track": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-track-endpoint.ts",
+    "test:catalog": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/verify-pod-catalog.ts",
+    "test:pod": "yarn test:money && yarn test:track && yarn test:catalog",
     "lint": "eslint src",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload"
