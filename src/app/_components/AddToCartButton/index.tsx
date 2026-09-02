@@ -5,7 +5,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { Product } from '../../../payload/payload-types'
+import { useAnalytics } from '../../_providers/Analytics'
 import { useCart } from '../../_providers/Cart'
+import { priceFromJSON } from '../Price'
 import { Button, Props } from '../Button'
 
 import classes from './index.module.scss'
@@ -34,6 +36,7 @@ export const AddToCartButton: React.FC<{
   } = props
 
   const { cart, addItemToCart, isProductInCart, hasInitializedCart } = useCart()
+  const { trackEvent } = useAnalytics()
 
   const [isInCart, setIsInCart] = useState<boolean>()
   const [showToast, setShowToast] = useState(false)
@@ -63,6 +66,24 @@ export const AddToCartButton: React.FC<{
         onClick={
           !isInCart && !disabled
             ? () => {
+                const priceVal =
+                  typeof product === 'object'
+                    ? Number(priceFromJSON(product.priceJSON, 1, true)) || 0
+                    : 0
+
+                trackEvent({
+                  name: 'add_to_cart',
+                  params: {
+                    item_id: product.id,
+                    item_name: product.title,
+                    price: priceVal,
+                    quantity,
+                    sku,
+                    variant_title: variantTitle,
+                    is_customized: Boolean(customDesignUrl || customText),
+                  },
+                })
+
                 addItemToCart({
                   product,
                   quantity,

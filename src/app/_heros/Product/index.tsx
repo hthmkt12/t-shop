@@ -1,13 +1,14 @@
 'use client'
 
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 
 import { Category, Product } from '../../../payload/payload-types'
 import { AddToCartButton } from '../../_components/AddToCartButton'
 import { Gutter } from '../../_components/Gutter'
 import { Media } from '../../_components/Media'
 import { CustomDesignData, PodCustomizer } from '../../_components/PodCustomizer'
-import { Price } from '../../_components/Price'
+import { Price, priceFromJSON } from '../../_components/Price'
+import { useAnalytics } from '../../_providers/Analytics'
 
 import classes from './index.module.scss'
 
@@ -15,6 +16,7 @@ export const ProductHero: React.FC<{
   product: Product
 }> = ({ product }) => {
   const { title, categories, meta: { image: metaImage, description } = {} } = product
+  const { trackEvent } = useAnalytics()
 
   const hasVariants = (product as any)?.enableVariants && (product as any)?.variants?.length > 0
   const variants = (product as any)?.variants || []
@@ -25,6 +27,25 @@ export const ProductHero: React.FC<{
   const currentStock = hasVariants ? currentVariant?.stock ?? 0 : (product as any)?.stock ?? 10
   const isAvailable = currentStock > 0
   const enableCustomizer = (product as any)?.enableCustomizer ?? true
+
+  useEffect(() => {
+    if (product?.id) {
+      const priceVal =
+        typeof currentVariant?.price === 'number'
+          ? currentVariant.price
+          : Number(priceFromJSON(product.priceJSON, 1, true)) || 0
+
+      trackEvent({
+        name: 'view_item',
+        params: {
+          item_id: product.id,
+          item_name: product.title,
+          price: priceVal,
+          category: categories?.[0] && typeof categories[0] === 'object' ? categories[0].title : undefined,
+        },
+      })
+    }
+  }, [product?.id, trackEvent])
 
   return (
     <Gutter className={classes.productHero}>

@@ -10,6 +10,7 @@ import { Settings } from '../../../../payload/payload-types'
 import { Button } from '../../../_components/Button'
 import { LoadingShimmer } from '../../../_components/LoadingShimmer'
 import { priceFromJSON } from '../../../_components/Price'
+import { useAnalytics } from '../../../_providers/Analytics'
 import { useAuth } from '../../../_providers/Auth'
 import { useCart } from '../../../_providers/Cart'
 import { useTheme } from '../../../_providers/Theme'
@@ -30,6 +31,7 @@ export const CheckoutPage: React.FC<{
 
   const { user } = useAuth()
   const router = useRouter()
+  const { trackEvent } = useAnalytics()
   const [error, setError] = React.useState<string | null>(null)
   const [clientSecret, setClientSecret] = React.useState<string | null>(null)
   const [guestEmail, setGuestEmail] = React.useState('')
@@ -90,6 +92,15 @@ export const CheckoutPage: React.FC<{
   useEffect(() => {
     if (cart && !cartIsEmpty && hasMadePaymentIntent.current === false) {
       hasMadePaymentIntent.current = true
+
+      trackEvent({
+        name: 'begin_checkout',
+        params: {
+          item_count: (cart?.items || []).reduce((acc, item) => acc + (item.quantity || 1), 0),
+          value: cartTotal.raw,
+          currency: 'USD',
+        },
+      })
 
       const makeIntent = async () => {
         try {

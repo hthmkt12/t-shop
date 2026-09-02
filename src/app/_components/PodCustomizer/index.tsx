@@ -3,6 +3,7 @@
 import React, { ChangeEvent, useState } from 'react'
 
 import { Media, Product } from '../../../payload/payload-types'
+import { useAnalytics } from '../../_providers/Analytics'
 import classes from './index.module.scss'
 
 export type CustomDesignData = {
@@ -23,6 +24,7 @@ type Props = {
 const TEXT_COLORS = ['#131118', '#FFFFFF', '#6C4CF1', '#FF5C8A', '#FFA820', '#10B981']
 
 export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesignChange }) => {
+  const { trackEvent } = useAnalytics()
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null)
   const [artworkName, setArtworkName] = useState<string>('')
   const [isUploading, setIsUploading] = useState<boolean>(false)
@@ -45,6 +47,18 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
       onDesignChange(null)
       return
     }
+
+    trackEvent({
+      name: 'customize_pod',
+      params: {
+        item_id: product.id,
+        item_name: product.title,
+        has_artwork: Boolean(nextUrl),
+        has_text: Boolean(nextText.trim()),
+        text_length: nextText.trim().length,
+      },
+    })
+
     onDesignChange({
       artworkUrl: nextUrl || undefined,
       artworkName: nextName || undefined,

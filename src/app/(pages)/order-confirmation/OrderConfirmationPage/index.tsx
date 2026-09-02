@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 
 import { Button } from '../../../_components/Button'
 import { Message } from '../../../_components/Message'
+import { useAnalytics } from '../../../_providers/Analytics'
 import { useCart } from '../../../_providers/Cart'
 
 import classes from './index.module.scss'
@@ -15,10 +16,19 @@ export const OrderConfirmationPage: React.FC<{}> = () => {
   const error = searchParams.get('error')
 
   const { clearCart } = useCart()
+  const { trackEvent } = useAnalytics()
 
   useEffect(() => {
     clearCart()
-  }, [clearCart])
+    if (orderID && !error) {
+      trackEvent({
+        name: 'purchase',
+        params: {
+          transaction_id: orderID,
+        },
+      })
+    }
+  }, [clearCart, orderID, error, trackEvent])
 
   return (
     <div>
