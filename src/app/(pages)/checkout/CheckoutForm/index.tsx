@@ -1,13 +1,12 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import { AddressElement, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useRouter } from 'next/navigation'
 
 import { Order } from '../../../../payload/payload-types'
 import { Button } from '../../../_components/Button'
 import { Message } from '../../../_components/Message'
-import { priceFromJSON } from '../../../_components/Price'
 import { useCart } from '../../../_providers/Cart'
 
 import classes from './index.module.scss'
@@ -17,6 +16,18 @@ export const CheckoutForm: React.FC<{}> = () => {
   const elements = useElements()
   const [error, setError] = React.useState<string | null>(null)
   const [isLoading, setIsLoading] = React.useState(false)
+  const [shipping, setShipping] = React.useState<{
+    name?: string
+    phone?: string
+    address?: {
+      line1?: string
+      line2?: string | null
+      city?: string
+      state?: string
+      postal_code?: string
+      country?: string
+    }
+  } | null>(null)
   const router = useRouter()
   const { cart, cartTotal } = useCart()
 
@@ -54,33 +65,30 @@ export const CheckoutForm: React.FC<{}> = () => {
               body: JSON.stringify({
                 total: cartTotal.raw,
                 stripePaymentIntentID: paymentIntent.id,
+                shippingAddress: shipping
+                  ? {
+                      recipientName: shipping.name,
+                      phone: shipping.phone,
+                      line1: shipping.address?.line1,
+                      line2: shipping.address?.line2 || undefined,
+                      city: shipping.address?.city,
+                      state: shipping.address?.state,
+                      postalCode: shipping.address?.postal_code,
+                      country: shipping.address?.country,
+                    }
+                  : undefined,
+                // `price` is intentionally omitted: the server re-derives each line
+                // item's unit price from authoritative product/variant data in the
+                // `recalculateTotal` beforeChange hook, so sending it here is redundant
+                // (and untrusted).
                 items: (cart?.items || [])?.map(item => {
                   const { product, quantity, sku, variantTitle } = item as any
-                  let itemPrice: number | undefined = undefined
-
-                  if (typeof product === 'object' && product) {
-                    if (product.enableVariants && Array.isArray(product.variants) && sku) {
-                      const variant = product.variants.find((v: any) => v.sku === sku)
-                      if (typeof variant?.price === 'number') {
-                        itemPrice = variant.price
-                      }
-                    }
-
-                    if (itemPrice === undefined) {
-                      if (typeof product.price === 'number') {
-                        itemPrice = product.price
-                      } else {
-                        itemPrice = priceFromJSON(product.priceJSON, 1, true)
-                      }
-                    }
-                  }
 
                   return {
                     product: typeof product === 'string' ? product : product?.id,
                     quantity,
                     sku: sku || undefined,
                     variantTitle: variantTitle || undefined,
-                    price: itemPrice,
                   }
                 }),
               }),
@@ -113,12 +121,18 @@ export const CheckoutForm: React.FC<{}> = () => {
         setIsLoading(false)
       }
     },
-    [stripe, elements, router, cart, cartTotal],
+    [stripe, elements, router, cart, cartTotal, shipping],
   )
 
   return (
     <form onSubmit={handleSubmit} className={classes.form}>
       {error && <Message error={error} />}
+      <AddressElement
+        options={{ mode: 'shipping', fields: { phone: 'always' } }}
+        onChange={event => {
+          setShipping(event.value)
+        }}
+      />
       <PaymentElement />
       <div className={classes.actions}>
         <Button label="Back to cart" href="/cart" appearance="secondary" />

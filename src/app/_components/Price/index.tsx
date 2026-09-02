@@ -37,27 +37,45 @@ export const priceFromJSON = (priceJSON: string, quantity: number = 1, raw?: boo
   return price
 }
 
+const formatCents = (amount: number, quantity: number = 1): string =>
+  ((amount * quantity) / 100).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  })
+
 export const Price: React.FC<{
   product: Product
   quantity?: number
   button?: 'addToCart' | 'removeFromCart' | false
+  // Raw amount in cents (e.g. selected variant price). When set, overrides priceJSON.
+  priceOverride?: number
 }> = props => {
-  const { product, product: { priceJSON } = {}, button = 'addToCart', quantity } = props
+  const {
+    product,
+    product: { priceJSON } = {},
+    button = 'addToCart',
+    quantity,
+    priceOverride,
+  } = props
+
+  const hasOverride = typeof priceOverride === 'number'
+
+  const compute = () => ({
+    actualPrice: hasOverride ? formatCents(priceOverride as number) : priceFromJSON(priceJSON),
+    withQuantity: hasOverride
+      ? formatCents(priceOverride as number, quantity)
+      : priceFromJSON(priceJSON, quantity),
+  })
 
   const [price, setPrice] = useState<{
     actualPrice: string
     withQuantity: string
-  }>(() => ({
-    actualPrice: priceFromJSON(priceJSON),
-    withQuantity: priceFromJSON(priceJSON, quantity),
-  }))
+  }>(compute)
 
   useEffect(() => {
-    setPrice({
-      actualPrice: priceFromJSON(priceJSON),
-      withQuantity: priceFromJSON(priceJSON, quantity),
-    })
-  }, [priceJSON, quantity])
+    setPrice(compute())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priceJSON, quantity, priceOverride])
 
   return (
     <div className={classes.actions}>

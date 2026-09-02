@@ -21,6 +21,7 @@ import { generateMeta } from '../../_utilities/generateMeta'
 export const dynamic = 'force-dynamic'
 
 import Categories from '../../_components/Categories'
+import { PodShowcase } from '../../_components/PodShowcase'
 
 import classes from './index.module.scss'
 
@@ -61,6 +62,8 @@ export default async function Page({ params: { slug = 'home' } }) {
           <Gutter className={classes.home}>
             <Categories categories={categories} />
           </Gutter>
+
+          <PodShowcase />
         </section>
       ) : (
         <>

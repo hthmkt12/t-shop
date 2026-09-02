@@ -81,10 +81,22 @@
   --theme-elevation-950: var(--color-base-950);
   --theme-elevation-1000: var(--color-base-1000);
 
-  --theme-bg: var(--theme-elevation-0);
-  --theme-input-bg: var(--theme-elevation-50);
-  --theme-text: var(--theme-elevation-750);
-  --theme-border-color: var(--theme-elevation-150);
+  --theme-bg: var(--pod-surface);
+  --theme-input-bg: var(--theme-elevation-0);
+  --theme-text: var(--pod-ink);
+  --theme-border-color: var(--pod-border);
+
+  // POD semantic tokens
+  --theme-brand: var(--pod-primary-500);
+  --theme-brand-hover: var(--pod-primary-600);
+  --theme-on-brand: var(--color-white-500);
+  --theme-accent: var(--pod-accent-500);
+  --theme-accent-hover: var(--pod-accent-600);
+  --theme-surface: var(--pod-surface);
+  --theme-surface-raised: var(--pod-surface-raised);
+  --theme-card-border: var(--pod-border);
+  --theme-text-soft: var(--pod-ink-soft);
+  --theme-text-muted: var(--pod-muted);
 
   color-scheme: light;
   color: var(--theme-text);
@@ -204,6 +216,18 @@
   --theme-text: var(--theme-elevation-900);
   --theme-input-bg: var(--theme-elevation-150);
   --theme-border-color: var(--theme-elevation-250);
+
+  // POD semantic tokens (lighter primary for contrast on dark)
+  --theme-brand: var(--pod-primary-400);
+  --theme-brand-hover: var(--pod-primary-300);
+  --theme-on-brand: var(--color-white-500);
+  --theme-accent: var(--pod-accent-500);
+  --theme-accent-hover: var(--pod-accent-300);
+  --theme-surface: var(--theme-elevation-100);
+  --theme-surface-raised: var(--theme-elevation-150);
+  --theme-card-border: var(--theme-elevation-250);
+  --theme-text-soft: var(--theme-elevation-700);
+  --theme-text-muted: var(--theme-elevation-500);
 
   color-scheme: dark;
   color: var(--theme-text);

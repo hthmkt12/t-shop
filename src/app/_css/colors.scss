@@ -94,6 +94,73 @@
   
   --color-gray-500: rgba(164, 161, 170, 1);
   --color-green-500: rgba(60, 209, 57, 1);
+
+  // ------------------------------------------------------------------
+  // POD (Print-on-Demand) design tokens
+  // Creative-commerce palette: vivid violet primary + coral accent.
+  // ------------------------------------------------------------------
+
+  // Primary — Violet (brand)
+  --pod-primary-50: rgb(238, 233, 254);
+  --pod-primary-100: rgb(221, 212, 253);
+  --pod-primary-200: rgb(196, 181, 251);
+  --pod-primary-300: rgb(168, 145, 249);
+  --pod-primary-400: rgb(140, 110, 246);
+  --pod-primary-500: rgb(108, 76, 241); // #6C4CF1 core brand
+  --pod-primary-600: rgb(90, 60, 214);
+  --pod-primary-700: rgb(72, 47, 178);
+  --pod-primary-800: rgb(55, 36, 138);
+  --pod-primary-900: rgb(39, 26, 99);
+
+  // Accent — Coral (CTA / highlights)
+  --pod-accent-50: rgb(255, 236, 241);
+  --pod-accent-100: rgb(255, 214, 226);
+  --pod-accent-300: rgb(255, 150, 178);
+  --pod-accent-500: rgb(255, 92, 138); // #FF5C8A
+  --pod-accent-600: rgb(230, 74, 118);
+  --pod-accent-700: rgb(194, 57, 96);
+
+  // Support — Amber (badges: sale / limited)
+  --pod-amber-400: rgb(255, 191, 71);
+  --pod-amber-500: rgb(255, 168, 32); // #FFA820
+
+  // Ink & surfaces
+  --pod-ink: rgb(19, 17, 24);        // primary text
+  --pod-ink-soft: rgb(74, 70, 88);   // secondary text
+  --pod-muted: rgb(129, 124, 145);   // captions / meta
+  --pod-surface: rgb(247, 246, 251); // page background
+  --pod-surface-raised: rgb(255, 255, 255);
+  --pod-border: rgb(230, 228, 238);
+
+  // Gradient (hero / mockups)
+  --pod-gradient: linear-gradient(120deg, rgb(108, 76, 241) 0%, rgb(255, 92, 138) 100%);
+  --pod-gradient-soft: linear-gradient(120deg, rgb(238, 233, 254) 0%, rgb(255, 236, 241) 100%);
+
+  // Radius scale
+  --pod-radius-xs: 6px;
+  --pod-radius-sm: 10px;
+  --pod-radius-md: 16px;
+  --pod-radius-lg: 24px;
+  --pod-radius-xl: 32px;
+  --pod-radius-pill: 999px;
+
+  // Elevation / shadow scale
+  --pod-shadow-sm: 0 1px 2px rgba(19, 17, 24, 0.06), 0 1px 3px rgba(19, 17, 24, 0.08);
+  --pod-shadow-md: 0 6px 16px rgba(19, 17, 24, 0.08), 0 2px 6px rgba(19, 17, 24, 0.06);
+  --pod-shadow-lg: 0 18px 40px rgba(19, 17, 24, 0.14), 0 6px 14px rgba(19, 17, 24, 0.08);
+  --pod-shadow-primary: 0 10px 24px rgba(108, 76, 241, 0.32);
+  --pod-shadow-accent: 0 10px 24px rgba(255, 92, 138, 0.32);
+
+  // Spacing scale (4px base)
+  --pod-space-1: 4px;
+  --pod-space-2: 8px;
+  --pod-space-3: 12px;
+  --pod-space-4: 16px;
+  --pod-space-5: 24px;
+  --pod-space-6: 32px;
+  --pod-space-7: 48px;
+  --pod-space-8: 64px;
+  --pod-space-9: 96px;
 }
 
 

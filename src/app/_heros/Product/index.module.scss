@@ -13,11 +13,14 @@
 
 .mediaWrapper {
   position: relative;
-  min-height: 400px;
-  background-color: var(--color-dark-50);
+  min-height: 460px;
+  background: var(--pod-gradient-soft);
+  border-radius: var(--pod-radius-xl);
+  border: 1px solid var(--theme-card-border);
+  overflow: hidden;
 
   @include small-break {
-    min-height: 250px;
+    min-height: 280px;
   }
 }
 
@@ -71,22 +74,29 @@
   }
 
   .variantBtn {
-    padding: 8px 16px;
-    border: 1px solid var(--color-dark-200);
-    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1.5px solid var(--theme-card-border);
+    background: var(--theme-surface-raised);
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: var(--pod-radius-pill);
     font-size: 14px;
+    font-weight: 500;
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: var(--color-dark-500);
+      border-color: var(--theme-brand);
+      color: var(--theme-brand);
     }
 
     &.selected {
-      border-color: var(--color-dark-1000);
-      background-color: var(--color-dark-50);
+      border-color: var(--theme-brand);
+      background-color: var(--theme-brand);
+      color: var(--theme-on-brand);
       font-weight: 600;
+      box-shadow: var(--pod-shadow-primary);
     }
 
     &.disabled {
@@ -94,6 +104,15 @@
       cursor: not-allowed;
       text-decoration: line-through;
     }
+  }
+
+  .swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+    display: inline-block;
   }
 }
 

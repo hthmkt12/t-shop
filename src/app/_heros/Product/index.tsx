@@ -75,6 +75,13 @@ export const ProductHero: React.FC<{
                       .join(' ')}
                     onClick={() => setSelectedVariantIndex(idx)}
                   >
+                    {v.colorHex && (
+                      <span
+                        className={classes.swatch}
+                        style={{ backgroundColor: v.colorHex }}
+                        aria-hidden="true"
+                      />
+                    )}
                     {v.title || v.sku}
                   </button>
                 )
@@ -83,7 +90,13 @@ export const ProductHero: React.FC<{
           </div>
         )}
 
-        <Price product={product} button={false} />
+        <Price
+          product={product}
+          button={false}
+          priceOverride={
+            typeof currentVariant?.price === 'number' ? currentVariant.price : undefined
+          }
+        />
 
         <div className={classes.description}>
           <h6>Description</h6>
