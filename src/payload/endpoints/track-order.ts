@@ -64,8 +64,13 @@ export const trackOrder: PayloadHandler = async (req, res): Promise<void> => {
         price: item.price,
       })),
     })
-  } catch (err: any) {
-    if (err?.name === 'NotFound' || err?.message?.includes('not found') || err?.status === 404) {
+  } catch (err: unknown) {
+    const errorObj = err as Record<string, unknown> | null
+    if (
+      errorObj?.name === 'NotFound' ||
+      (typeof errorObj?.message === 'string' && errorObj.message.includes('not found')) ||
+      errorObj?.status === 404
+    ) {
       res.status(404).json({ error: 'Order not found with provided ID' })
       return
     }

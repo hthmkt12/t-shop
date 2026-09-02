@@ -16,6 +16,17 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 const start = async (): Promise<void> => {
+  if (process.env.NEXT_BUILD) {
+    app.listen(PORT, async () => {
+      console.log(`Next.js is now building (standalone build)...`)
+      // @ts-expect-error
+      await nextBuild(path.join(__dirname, '../'))
+      process.exit()
+    })
+
+    return
+  }
+
   await payload.init({
     secret: process.env.PAYLOAD_SECRET || '',
     express: app,
@@ -27,17 +38,6 @@ const start = async (): Promise<void> => {
   if (process.env.PAYLOAD_SEED === 'true') {
     await seed(payload)
     process.exit()
-  }
-
-  if (process.env.NEXT_BUILD) {
-    app.listen(PORT, async () => {
-      payload.logger.info(`Next.js is now building...`)
-      // @ts-expect-error
-      await nextBuild(path.join(__dirname, '../'))
-      process.exit()
-    })
-
-    return
   }
 
   const nextApp = next({
