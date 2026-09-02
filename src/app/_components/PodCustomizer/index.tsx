@@ -25,6 +25,8 @@ const TEXT_COLORS = ['#131118', '#FFFFFF', '#6C4CF1', '#FF5C8A', '#FFA820', '#10
 export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesignChange }) => {
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null)
   const [artworkName, setArtworkName] = useState<string>('')
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const [scale, setScale] = useState<number>(100)
   const [rotation, setRotation] = useState<number>(0)
   const [customText, setCustomText] = useState<string>('')
@@ -53,23 +55,51 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     })
   }
 
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = event => {
-      const url = event.target?.result as string
-      setArtworkUrl(url)
-      setArtworkName(file.name)
-      updateParent(url, file.name, scale, rotation, customText, textColor)
+    setUploadError(null)
+    setIsUploading(true)
+
+    // Local instant preview
+    const localPreviewUrl = URL.createObjectURL(file)
+    setArtworkUrl(localPreviewUrl)
+    setArtworkName(file.name)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('alt', `Artwork for ${product.title}: ${file.name}`)
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/media`, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to upload artwork to server')
+      }
+
+      const json = await res.json()
+      const serverUrl = json?.doc?.url || localPreviewUrl
+
+      setArtworkUrl(serverUrl)
+      updateParent(serverUrl, file.name, scale, rotation, customText, textColor)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error uploading file'
+      setUploadError(msg)
+      // Still allow client preview if offline/mock
+      updateParent(localPreviewUrl, file.name, scale, rotation, customText, textColor)
+    } finally {
+      setIsUploading(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const handleClearArtwork = () => {
     setArtworkUrl(null)
     setArtworkName('')
+    setUploadError(null)
     updateParent(null, '', scale, rotation, customText, textColor)
   }
 
@@ -160,10 +190,12 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
             <label>1. Upload Artwork / Design (PNG/JPG)</label>
             <div className={classes.uploadBtnRow}>
               <label className={classes.uploadLabel}>
-                <span>📁</span> {artworkName ? 'Change Design' : 'Choose Image File'}
+                <span>📁</span>{' '}
+                {isUploading ? 'Uploading...' : artworkName ? 'Change Design' : 'Choose Image File'}
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/webp"
+                  disabled={isUploading}
                   className={classes.fileInput}
                   onChange={handleFileUpload}
                 />
@@ -174,6 +206,11 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                 </button>
               )}
             </div>
+            {uploadError && (
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-error-500, #e74c3c)' }}>
+                {uploadError}
+              </span>
+            )}
           </div>
 
           {artworkUrl && (
