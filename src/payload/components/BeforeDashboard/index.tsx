@@ -12,15 +12,54 @@ const BeforeDashboard: React.FC = () => {
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome to your dashboard!</h4>
+        <h4>🎨 POD Store Admin & Fulfillment Center</h4>
       </Banner>
-      Here&apos;s what to do next:
+      <div style={{ marginBottom: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <Link
+          to="/admin/collections/orders"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '8px 16px',
+            backgroundColor: 'var(--theme-elevation-800)',
+            color: 'var(--theme-elevation-0)',
+            borderRadius: '4px',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          📦 Manage POD Orders & Fulfillment →
+        </Link>
+        <Link
+          to="/admin/collections/products"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '8px 16px',
+            backgroundColor: 'var(--theme-elevation-200)',
+            color: 'var(--theme-elevation-900)',
+            borderRadius: '4px',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          👕 Manage POD Catalog & Variants →
+        </Link>
+      </div>
+      Quick Guide & Admin Actions:
       <ul className={`${baseClass}__instructions`}>
         <li>
           <SeedButton />
-          {' with a few products and pages to jump-start your new project, then '}
-          <a href="/">visit your website</a>
-          {' to see the results.'}
+          {
+            ' with realistic POD catalog products (T-Shirt, Hoodie, Mug, Tote Bag) and sample orders, then '
+          }
+          <a href="/">visit your storefront</a>
+          {' to test live customizer.'}
+        </li>
+        <li>
+          <strong>Fulfillment Workflow:</strong> Open any Order to view customer uploaded artwork in
+          full resolution, update status (<i>Pending → In Production → Shipped → Delivered</i>), and
+          attach carrier tracking numbers.
         </li>
         <li>
           {'Head over to '}
@@ -32,67 +71,15 @@ const BeforeDashboard: React.FC = () => {
             {'Stripe to obtain your API Keys'}
           </a>
           {
-            '. Create a new account if needed, then copy them into your environment variables and restart your server. See the '
+            '. Create a new account if needed, then copy them into your environment variables and restart your server.'
           }
-          <a
-            href="https://github.com/payloadcms/payload/blob/main/templates/ecommerce/README.md#stripe"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {'README'}
-          </a>
-          {' for more details.'}
         </li>
         <li>
           <Link to="/admin/collections/products">Link each of your products</Link>
           {' to Stripe by selecting the corresponding product using the dropdown under '}
           <i>Product Details</i>.
         </li>
-        <li>
-          If you created this repo using Payload Cloud, head over to GitHub and clone it to your
-          local machine. It will be under the <i>GitHub Scope</i> that you selected when creating
-          this project.
-        </li>
-        <li>
-          {'Modify your '}
-          <a
-            href="https://payloadcms.com/docs/configuration/collections"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            collections
-          </a>
-          {' and add more '}
-          <a
-            href="https://payloadcms.com/docs/fields/overview"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            fields
-          </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
-          <a
-            href="https://payloadcms.com/docs/getting-started/what-is-payload"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Getting Started
-          </a>
-          {' docs.'}
-        </li>
-        <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
-        </li>
       </ul>
-      {'Pro Tip: This block is a '}
-      <a
-        href={'https://payloadcms.com/docs/admin/components#base-component-overrides'}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        custom component
-      </a>
-      , you can remove it at any time by updating your <strong>payload.config</strong>.
     </div>
   )
 }

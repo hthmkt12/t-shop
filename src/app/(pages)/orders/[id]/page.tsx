@@ -15,6 +15,18 @@ import { mergeOpenGraph } from '../../../_utilities/mergeOpenGraph'
 
 import classes from './index.module.scss'
 
+const statusMap: Record<string, { label: string; color: string; bg: string }> = {
+  pending: { label: 'Pending Production', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  in_production: {
+    label: 'In Production (Printing)',
+    color: '#8b5cf6',
+    bg: 'rgba(139, 92, 246, 0.1)',
+  },
+  shipped: { label: 'Shipped (In Transit)', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+  delivered: { label: 'Delivered', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+  cancelled: { label: 'Cancelled', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+}
+
 export default async function Order({ params: { id } }) {
   const { token } = await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(
@@ -30,6 +42,7 @@ export default async function Order({ params: { id } }) {
         'Content-Type': 'application/json',
         Authorization: `JWT ${token}`,
       },
+      cache: 'no-store',
     })?.then(async res => {
       if (!res.ok) notFound()
       const json = await res.json()
@@ -45,16 +58,59 @@ export default async function Order({ params: { id } }) {
     notFound()
   }
 
+  const fulfillment = statusMap[order.fulfillmentStatus || 'pending'] || statusMap.pending
+
   return (
     <Gutter className={classes.orders}>
-      <h1>
-        {`Order`}
-        <span className={classes.id}>{`${order.id}`}</span>
-      </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}
+      >
+        <h1>
+          {`Order `}
+          <span className={classes.id}>{`#${order.id}`}</span>
+        </h1>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: 600,
+            color: fulfillment.color,
+            backgroundColor: fulfillment.bg,
+            border: `1px solid ${fulfillment.color}`,
+          }}
+        >
+          <span
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: fulfillment.color,
+            }}
+          />
+          {fulfillment.label}
+        </div>
+      </div>
+
       <div className={classes.itemMeta}>
         <p>{`ID: ${order.id}`}</p>
-        <p>{`Payment Intent: ${order.stripePaymentIntentID}`}</p>
+        <p>{`Payment Intent: ${order.stripePaymentIntentID || 'Verified'}`}</p>
         <p>{`Ordered On: ${formatDateTime(order.createdAt)}`}</p>
+        {order.trackingNumber && (
+          <p style={{ color: 'var(--theme-brand)', fontWeight: 600 }}>
+            🚚 Tracking: {order.trackingCarrier ? `${order.trackingCarrier} - ` : ''}
+            {order.trackingNumber}
+          </p>
+        )}
         <p className={classes.total}>
           {'Total: '}
           {new Intl.NumberFormat('en-US', {
@@ -63,19 +119,52 @@ export default async function Order({ params: { id } }) {
           }).format(order.total / 100)}
         </p>
       </div>
+
+      {order.shippingAddress && (
+        <div
+          style={{
+            marginTop: '16px',
+            padding: '16px',
+            borderRadius: '8px',
+            backgroundColor: 'var(--pod-surface-1)',
+            border: '1px solid var(--pod-border)',
+          }}
+        >
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '15px', color: 'var(--theme-text)' }}>
+            📦 Shipping Destination
+          </h4>
+          <p style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600 }}>
+            {order.shippingAddress.recipientName || 'Customer'}
+            {order.shippingAddress.phone ? ` • ${order.shippingAddress.phone}` : ''}
+          </p>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--theme-text-soft)' }}>
+            {[
+              order.shippingAddress.line1,
+              order.shippingAddress.line2,
+              order.shippingAddress.city,
+              order.shippingAddress.state,
+              order.shippingAddress.postalCode,
+              order.shippingAddress.country,
+            ]
+              .filter(Boolean)
+              .join(', ')}
+          </p>
+        </div>
+      )}
+
       <HR />
+
       <div className={classes.order}>
-        <h4 className={classes.orderItems}>Items</h4>
+        <h4 className={classes.orderItems}>Items in Production</h4>
         {order.items?.map((item, index) => {
           if (typeof item.product === 'object') {
             const {
               quantity,
               product,
-              product: { id, title, meta, stripeProductID },
+              product: { id: prodId, title, meta, stripeProductID },
             } = item
 
             const isLast = index === (order?.items?.length || 0) - 1
-
             const metaImage = meta?.image
 
             return (
@@ -97,7 +186,7 @@ export default async function Order({ params: { id } }) {
                       <p className={classes.warning}>
                         {'This product is not yet connected to Stripe. To link this product, '}
                         <Link
-                          href={`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/collections/products/${id}`}
+                          href={`${process.env.NEXT_PUBLIC_SERVER_URL}/admin/collections/products/${prodId}`}
                         >
                           edit this product in the admin panel
                         </Link>
@@ -140,17 +229,34 @@ export default async function Order({ params: { id } }) {
                         >
                           🎨 Custom Print:
                         </span>
-                        <img
-                          src={(item as any).customDesignUrl}
-                          alt="Custom artwork"
-                          style={{
-                            width: '28px',
-                            height: '28px',
-                            objectFit: 'contain',
-                            borderRadius: '4px',
-                            border: '1px solid var(--pod-border)',
-                          }}
-                        />
+                        <a
+                          href={(item as any).customDesignUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <img
+                            src={(item as any).customDesignUrl}
+                            alt="Custom artwork"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              objectFit: 'contain',
+                              borderRadius: '4px',
+                              border: '1px solid var(--pod-border)',
+                              backgroundColor: '#121118',
+                            }}
+                          />
+                          <span
+                            style={{
+                              fontSize: '12px',
+                              color: 'var(--theme-brand)',
+                              textDecoration: 'underline',
+                            }}
+                          >
+                            View Artwork
+                          </span>
+                        </a>
                       </div>
                     )}
                     {(item as any)?.customText && (
@@ -162,7 +268,7 @@ export default async function Order({ params: { id } }) {
                           marginBottom: '6px',
                         }}
                       >
-                        Custom Text: "{(item as any).customText}"
+                        Custom Text: &ldquo;{(item as any).customText}&rdquo;
                       </p>
                     )}
                     <p>{`Quantity: ${quantity}`}</p>

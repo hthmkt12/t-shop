@@ -14,6 +14,14 @@ import { mergeOpenGraph } from '../../_utilities/mergeOpenGraph'
 
 import classes from './index.module.scss'
 
+const statusMap: Record<string, { label: string; color: string; bg: string }> = {
+  pending: { label: 'Pending', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+  in_production: { label: 'In Production', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
+  shipped: { label: 'Shipped', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+  delivered: { label: 'Delivered', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
+  cancelled: { label: 'Cancelled', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+}
+
 export default async function Orders() {
   const { token } = await getMeUser({
     nullUserRedirect: `/login?error=${encodeURIComponent(
@@ -40,47 +48,79 @@ export default async function Orders() {
       })
       ?.then(json => json.docs)
   } catch (error) {
-    // when deploying this template on Payload Cloud, this page needs to build before the APIs are live
-    // so swallow the error here and simply render the page with fallback data where necessary
-    // in production you may want to redirect to a 404  page or at least log the error somewhere
     // console.error(error)
   }
 
   return (
     <Gutter className={classes.orders}>
-      <h1>Orders</h1>
+      <h1>My Orders</h1>
       {(!orders || !Array.isArray(orders) || orders?.length === 0) && (
         <p className={classes.noOrders}>You have no orders.</p>
       )}
       <RenderParams />
       {orders && orders.length > 0 && (
         <ul className={classes.ordersList}>
-          {orders?.map((order, index) => (
-            <li key={order.id} className={classes.listItem}>
-              <Link className={classes.item} href={`/orders/${order.id}`}>
-                <div className={classes.itemContent}>
-                  <h4 className={classes.itemTitle}>{`Order ${order.id}`}</h4>
-                  <div className={classes.itemMeta}>
-                    <p>{`Ordered On: ${formatDateTime(order.createdAt)}`}</p>
-                    <p>
-                      {'Total: '}
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'usd',
-                      }).format(order.total / 100)}
-                    </p>
+          {orders?.map((order, index) => {
+            const fulfillment = statusMap[order.fulfillmentStatus || 'pending'] || statusMap.pending
+
+            return (
+              <li key={order.id} className={classes.listItem}>
+                <Link className={classes.item} href={`/orders/${order.id}`}>
+                  <div className={classes.itemContent}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <h4
+                        className={classes.itemTitle}
+                        style={{ margin: 0 }}
+                      >{`Order #${order.id}`}</h4>
+                      <span
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          color: fulfillment.color,
+                          backgroundColor: fulfillment.bg,
+                          border: `1px solid ${fulfillment.color}`,
+                        }}
+                      >
+                        {fulfillment.label}
+                      </span>
+                    </div>
+                    <div className={classes.itemMeta}>
+                      <p>{`Ordered On: ${formatDateTime(order.createdAt)}`}</p>
+                      {order.trackingNumber && (
+                        <p style={{ color: 'var(--theme-brand)', fontSize: '13px' }}>
+                          Tracking: {order.trackingCarrier ? `${order.trackingCarrier} ` : ''}
+                          {order.trackingNumber}
+                        </p>
+                      )}
+                      <p>
+                        {'Total: '}
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'usd',
+                        }).format(order.total / 100)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <Button
-                  appearance="secondary"
-                  label="View Order"
-                  className={classes.button}
-                  el="button"
-                />
-              </Link>
-              {index !== orders.length - 1 && <HR />}
-            </li>
-          ))}
+                  <Button
+                    appearance="secondary"
+                    label="View Order"
+                    className={classes.button}
+                    el="button"
+                  />
+                </Link>
+                {index !== orders.length - 1 && <HR />}
+              </li>
+            )
+          })}
         </ul>
       )}
       <HR />

@@ -9,6 +9,7 @@ import { recalculateTotal } from './hooks/recalculateTotal'
 import { updateProductStock } from './hooks/updateProductStock'
 import { updateUserPurchases } from './hooks/updateUserPurchases'
 import { LinkToPaymentIntent } from './ui/LinkToPaymentIntent'
+import { CustomDesignPreview } from './ui/CustomDesignPreview'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -103,6 +104,15 @@ export const Orders: CollectionConfig = {
           name: 'customText',
           label: 'Custom Printed Text',
           type: 'text',
+        },
+        {
+          name: 'customDesignPreview',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: CustomDesignPreview,
+            },
+          },
         },
         {
           name: 'price',
