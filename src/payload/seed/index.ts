@@ -7,9 +7,11 @@ import { home } from './home'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
 import { image3 } from './image-3'
-import { product1 } from './product-1'
+import { podHoodie } from './pod-hoodie'
+import { podMug } from './pod-mug'
+import { podTote } from './pod-tote'
+import { podTshirt } from './pod-tshirt'
 import { product2 } from './product-2'
-import { product3 } from './product-3'
 import { productsPage } from './products-page'
 
 const collections = ['categories', 'media', 'pages', 'products']
@@ -84,42 +86,79 @@ export const seed = async (payload: Payload): Promise<void> => {
 
   payload.logger.info(`— Seeding categories...`)
 
-  const [apparelCategory, ebooksCategory, coursesCategory] = await Promise.all([
-    await payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Apparel',
-      },
-    }),
-    await payload.create({
-      collection: 'categories',
-      data: {
-        title: 'E-books',
-      },
-    }),
-    await payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Online courses',
-      },
-    }),
-  ])
+  const [apparelCategory, drinkwareCategory, accessoriesCategory, ebooksCategory] =
+    await Promise.all([
+      await payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Apparel & Clothing',
+        },
+      }),
+      await payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Drinkware & Mugs',
+        },
+      }),
+      await payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Bags & Accessories',
+        },
+      }),
+      await payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Digital Goods',
+        },
+      }),
+    ])
 
   payload.logger.info(`— Seeding products...`)
 
-  // Do not create product with `Promise.all` because we want the products to be created in order
-  // This way we can sort them by `createdAt` or `publishedOn` and they will be in the expected order
-  const product1Doc = await payload.create({
+  // Seed POD Customizer Products
+  const tshirtDoc = await payload.create({
     collection: 'products',
     data: JSON.parse(
-      JSON.stringify({ ...product1, categories: [apparelCategory.id] }).replace(
+      JSON.stringify({ ...podTshirt, categories: [apparelCategory.id] }).replace(
         /"\{\{PRODUCT_IMAGE\}\}"/g,
         image1ID,
       ),
     ),
   })
 
-  const product2Doc = await payload.create({
+  const hoodieDoc = await payload.create({
+    collection: 'products',
+    data: JSON.parse(
+      JSON.stringify({ ...podHoodie, categories: [apparelCategory.id] }).replace(
+        /"\{\{PRODUCT_IMAGE\}\}"/g,
+        image1ID,
+      ),
+    ),
+  })
+
+  const mugDoc = await payload.create({
+    collection: 'products',
+    data: JSON.parse(
+      JSON.stringify({ ...podMug, categories: [drinkwareCategory.id] }).replace(
+        /"\{\{PRODUCT_IMAGE\}\}"/g,
+        image2ID,
+      ),
+    ),
+  })
+
+  const toteDoc = await payload.create({
+    collection: 'products',
+    data: JSON.parse(
+      JSON.stringify({ ...podTote, categories: [accessoriesCategory.id] }).replace(
+        /"\{\{PRODUCT_IMAGE\}\}"/g,
+        image3ID,
+      ),
+    ),
+  })
+
+  // Legacy digital items
+  await payload.create({
     collection: 'products',
     data: JSON.parse(
       JSON.stringify({ ...product2, categories: [ebooksCategory.id] }).replace(
@@ -129,38 +168,34 @@ export const seed = async (payload: Payload): Promise<void> => {
     ),
   })
 
-  const product3Doc = await payload.create({
-    collection: 'products',
-    data: JSON.parse(
-      JSON.stringify({ ...product3, categories: [coursesCategory.id] }).replace(
-        /"\{\{PRODUCT_IMAGE\}\}"/g,
-        image3ID,
-      ),
-    ),
-  })
-
   // update each product with related products
-
   await Promise.all([
     await payload.update({
       collection: 'products',
-      id: product1Doc.id,
+      id: tshirtDoc.id,
       data: {
-        relatedProducts: [product2Doc.id, product3Doc.id],
+        relatedProducts: [hoodieDoc.id, mugDoc.id, toteDoc.id],
       },
     }),
     await payload.update({
       collection: 'products',
-      id: product2Doc.id,
+      id: hoodieDoc.id,
       data: {
-        relatedProducts: [product1Doc.id, product3Doc.id],
+        relatedProducts: [tshirtDoc.id, toteDoc.id],
       },
     }),
     await payload.update({
       collection: 'products',
-      id: product3Doc.id,
+      id: mugDoc.id,
       data: {
-        relatedProducts: [product1Doc.id, product2Doc.id],
+        relatedProducts: [toteDoc.id, tshirtDoc.id],
+      },
+    }),
+    await payload.update({
+      collection: 'products',
+      id: toteDoc.id,
+      data: {
+        relatedProducts: [tshirtDoc.id, mugDoc.id],
       },
     }),
   ])
