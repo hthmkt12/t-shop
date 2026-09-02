@@ -23,6 +23,7 @@ import BeforeDashboard from './components/BeforeDashboard'
 import BeforeLogin from './components/BeforeLogin'
 import { createPaymentIntent } from './endpoints/create-payment-intent'
 import { customersProxy } from './endpoints/customers'
+import { exportProductionBatch } from './endpoints/export-production-batch'
 import { productsProxy } from './endpoints/products'
 import { seed } from './endpoints/seed'
 import { trackOrder } from './endpoints/track-order'
@@ -78,6 +79,7 @@ export default buildConfig({
             [path.resolve(__dirname, 'endpoints/products')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/seed')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/track-order')]: mockModulePath,
+            [path.resolve(__dirname, 'endpoints/export-production-batch')]: mockModulePath,
             stripe: mockModulePath,
             express: mockModulePath,
           },
@@ -149,6 +151,11 @@ export default buildConfig({
       path: '/track-order',
       method: 'get',
       handler: trackOrder,
+    },
+    {
+      path: '/export-production-batch',
+      method: 'get',
+      handler: exportProductionBatch,
     },
   ],
   plugins: [
