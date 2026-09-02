@@ -23,11 +23,10 @@ const apiKey = `${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}`
 const stripe = loadStripe(apiKey)
 
 export const CheckoutPage: React.FC<{
-  settings: Settings
+  settings: Settings | null
 }> = props => {
-  const {
-    settings: { productsPage },
-  } = props
+  const { settings } = props
+  const { productsPage } = settings || {}
 
   const { user } = useAuth()
   const router = useRouter()
