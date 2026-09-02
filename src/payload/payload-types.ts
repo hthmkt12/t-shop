@@ -292,6 +292,7 @@ export interface Product {
     | null;
   stripeProductID?: string | null;
   priceJSON?: string | null;
+  productType?: ('tshirt' | 'hoodie' | 'mug' | 'tote' | 'poster' | 'sticker' | 'phonecase') | null;
   enableVariants?: boolean | null;
   stock?: number | null;
   variants?:
@@ -300,6 +301,7 @@ export interface Product {
         title: string;
         size?: ('s' | 'm' | 'l' | 'xl') | null;
         color?: string | null;
+        colorHex?: string | null;
         price?: number | null;
         stock?: number | null;
         id?: string | null;
@@ -414,6 +416,7 @@ export interface Order {
   id: string;
   orderedBy?: (string | null) | User;
   stripePaymentIntentID?: string | null;
+  fulfillmentStatus: 'pending' | 'in_production' | 'shipped' | 'delivered' | 'cancelled';
   total: number;
   items?:
     | {
@@ -425,6 +428,19 @@ export interface Order {
         id?: string | null;
       }[]
     | null;
+  shippingAddress?: {
+    recipientName?: string | null;
+    phone?: string | null;
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  trackingCarrier?: string | null;
+  trackingNumber?: string | null;
+  productionNotes?: string | null;
   updatedAt: string;
   createdAt: string;
 }

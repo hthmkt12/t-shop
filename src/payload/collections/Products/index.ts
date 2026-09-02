@@ -115,6 +115,24 @@ const Products: CollectionConfig = {
               },
             },
             {
+              name: 'productType',
+              label: 'Product Type (Print-on-Demand)',
+              type: 'select',
+              defaultValue: 'tshirt',
+              options: [
+                { label: 'T-Shirt', value: 'tshirt' },
+                { label: 'Hoodie', value: 'hoodie' },
+                { label: 'Mug', value: 'mug' },
+                { label: 'Tote Bag', value: 'tote' },
+                { label: 'Poster', value: 'poster' },
+                { label: 'Sticker', value: 'sticker' },
+                { label: 'Phone Case', value: 'phonecase' },
+              ],
+              admin: {
+                description: 'Base blank product the design is printed on',
+              },
+            },
+            {
               name: 'enableVariants',
               label: 'Enable Variants',
               type: 'checkbox',
@@ -165,6 +183,15 @@ const Products: CollectionConfig = {
                   name: 'color',
                   label: 'Color',
                   type: 'text',
+                },
+                {
+                  name: 'colorHex',
+                  label: 'Color Swatch (hex)',
+                  type: 'text',
+                  admin: {
+                    description:
+                      'Hex code (e.g. #131118) used to render the color swatch on the storefront',
+                  },
                 },
                 {
                   name: 'price',

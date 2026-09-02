@@ -108,7 +108,19 @@ export const createPaymentIntent: PayloadHandler = async (req, res): Promise<voi
         }
 
         const price = prices.data[0]
-        total += price.unit_amount * quantity
+
+        // Honor per-variant price override. `variant.price` lives only in Payload
+        // (there is no per-variant Stripe price), so the charged amount must use it
+        // to stay consistent with the order total shown/stored on the client.
+        let unitAmount = price.unit_amount ?? 0
+        if (product.enableVariants && Array.isArray(product.variants) && itemSku) {
+          const variant = product.variants.find((v: any) => v.sku === itemSku)
+          if (typeof variant?.price === 'number') {
+            unitAmount = variant.price
+          }
+        }
+
+        total += unitAmount * quantity
 
         return null
       }),
