@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload/types'
 
 import { admins } from '../../access/admins'
-import { adminsOrLoggedIn } from '../../access/adminsOrLoggedIn'
+import { anyone } from '../../access/anyone'
 import { adminsOrOrderedBy } from './access/adminsOrOrderedBy'
 import { clearUserCart } from './hooks/clearUserCart'
 import { populateOrderedBy } from './hooks/populateOrderedBy'
@@ -31,14 +31,25 @@ export const Orders: CollectionConfig = {
   access: {
     read: adminsOrOrderedBy,
     update: admins,
-    create: adminsOrLoggedIn,
+    create: anyone,
     delete: admins,
   },
   fields: [
     {
+      name: 'guestEmail',
+      label: 'Guest Customer Email',
+      type: 'email',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Recorded for unauthenticated (guest) checkout orders',
+      },
+    },
+    {
       name: 'orderedBy',
       type: 'relationship',
       relationTo: 'users',
+      index: true,
       hooks: {
         beforeChange: [populateOrderedBy],
       },
@@ -47,6 +58,7 @@ export const Orders: CollectionConfig = {
       name: 'stripePaymentIntentID',
       label: 'Stripe Payment Intent ID',
       type: 'text',
+      index: true,
       admin: {
         position: 'sidebar',
         components: {
@@ -60,6 +72,7 @@ export const Orders: CollectionConfig = {
       type: 'select',
       defaultValue: 'pending',
       required: true,
+      index: true,
       options: [
         { label: 'Pending', value: 'pending' },
         { label: 'In Production', value: 'in_production' },

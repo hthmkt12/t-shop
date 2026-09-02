@@ -1,0 +1,9 @@
+﻿{
+  "id": "job-4-rereview",
+  "runtime": "claude-code CLI (headless -p)",
+  "task": "review",
+  "status": "failed",
+  "reason": "API Connection refused (firewall/proxy) on 2 consecutive attempts; independent runtime unreachable",
+  "attempts": 2,
+  "fallback": "coordinator (same-agent) re-review performed; disclosed non-independent"
+}

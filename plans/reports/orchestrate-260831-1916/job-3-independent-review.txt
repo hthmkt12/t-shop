@@ -1,0 +1,41 @@
+﻿claude.exe : "ag/gemini-3.7-flash-high" is not a model this version of Claude Code recognizes, so auto-compact will 
+keep this session within 200k tokens (the context window it assumes). If the model accepts more, set 
+CLAUDE_CODE_MAX_CONTEXT_TOKENS to its real window; to make it recognized, map it in the modelOverrides setting or 
+update Claude Code; CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT=1 restores the previous wait-for-the-API 
+behavior.
+At C:\Users\manhpc\AppData\Roaming\npm\claude.ps1:14 char:3
++   & "$basedir/node_modules/@anthropic-ai/claude-code/bin/claude.exe"  ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ("ag/gemini-3.7-...e-API behavior.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[claude-code:unrecognized_model] {"model":"ag/gemini-3.7-flash-high","query_source":"sdk"}
+**Verdict: FAIL**
+
+**Verified items:**
+1. **Total & price re-derivation:** `recalculateTotal.ts:37-73` re-fetches product/variant unit prices from DB. `recalculateTotal.ts:121-124` overrides `total` with `paymentIntent.amount`.
+2. **Hook safety:** `Orders/index.ts:95-98` defines `price` as optional (no `required: true`). Client omitting `price` passes schema validation.
+3. **Price units:** Consistent. All use integer cents (`create-payment-intent.ts:115-123`, `recalculateTotal.ts:55-62`, `Products/hooks/populatePrice.ts:11`).
+
+---
+
+**Critical security flaws:**
+
+1. **Items / Cart mismatch not rejected:**
+   - `create-payment-intent.ts:63` charges cart on server.
+   - `CheckoutForm/index.tsx:84` sends arbitrary `items` in `POST /api/orders`.
+   - `recalculateTotal.ts:115-119` logs warning when `expectedItemsTotal !== authorizedAmount` but still saves order.
+   - Malicious client pays $1 for cheap item, submits expensive items/quantities in order body, draining stock (`updateProductStock.ts:26`) and recording fraudulent line items.
+   - **Fix:** Reject order creation (`throw new Error(...)`) if `expectedItemsTotal !== authorizedAmount`.
+
+2. **PaymentIntent status unverified:**
+   - `recalculateTotal.ts:98-106` checks `amount`, never checks `paymentIntent.status === 'succeeded'`.
+   - Attacker passes canceled/incomplete `stripePaymentIntentID` to create free orders.
+
+3. **PaymentIntent ID reuse:**
+   - `Orders/index.ts:40-49` lacks `unique: true` on `stripePaymentIntentID`.
+   - Attacker reuses one valid $50 `paymentIntentID` to spawn infinite orders.
+
+4. **Silent fallback on error / missing key:**
+   - `recalculateTotal.ts:94,130` returns client-submitted `data` when Stripe key missing or API throws, persisting client-provided `total`.
+   - **Fix:** Throw error on Stripe retrieval failure.

@@ -1,0 +1,6 @@
+﻿{
+  "id": "job-2-smoke",
+  "runtime": null,
+  "status": "blocked",
+  "reason": "destructive + credentialed + interactive; requires explicit user approval and cannot be done by a headless runtime"
+}

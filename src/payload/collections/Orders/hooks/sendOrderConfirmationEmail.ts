@@ -22,6 +22,8 @@ export const sendOrderConfirmationEmail: AfterChangeHook<Order> = async ({
         id: userId,
       })
       customerEmail = user?.email
+    } else if ((doc as any).guestEmail) {
+      customerEmail = (doc as any).guestEmail
     }
 
     if (!customerEmail) {

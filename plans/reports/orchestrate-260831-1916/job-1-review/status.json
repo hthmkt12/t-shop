@@ -1,0 +1,14 @@
+﻿{
+  "id": "job-1-review",
+  "runtime": "internal-coordinator",
+  "model": null,
+  "agent": "coordinator (same-agent review, disclosed non-independent)",
+  "task": "review",
+  "capabilityTier": "C3",
+  "riskTier": "R0",
+  "status": "success",
+  "exitCode": 0,
+  "timedOut": false,
+  "attempts": 1,
+  "worktree": null
+}

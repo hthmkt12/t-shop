@@ -33,6 +33,7 @@ export const CheckoutPage: React.FC<{
   const router = useRouter()
   const [error, setError] = React.useState<string | null>(null)
   const [clientSecret, setClientSecret] = React.useState<string | null>(null)
+  const [guestEmail, setGuestEmail] = React.useState('')
   const [isTestSubmitting, setIsTestSubmitting] = React.useState(false)
 
   const handleTestCheckout = async () => {
@@ -47,16 +48,21 @@ export const CheckoutPage: React.FC<{
         body: JSON.stringify({
           total: cartTotal.raw,
           stripePaymentIntentID: `test_mock_${Date.now()}`,
-          items: (cart?.items || [])?.map(({ product, quantity, sku, variantTitle }: any) => ({
-            product: typeof product === 'string' ? product : product.id,
-            quantity,
-            sku,
-            variantTitle,
-            price:
-              typeof product === 'object'
-                ? Number(priceFromJSON(product.priceJSON, 1, true))
-                : undefined,
-          })),
+          guestEmail: !user && guestEmail ? guestEmail : undefined,
+          items: (cart?.items || [])?.map(
+            ({ product, quantity, sku, variantTitle, customDesignUrl, customText }: any) => ({
+              product: typeof product === 'string' ? product : product.id,
+              quantity,
+              sku,
+              variantTitle,
+              customDesignUrl,
+              customText,
+              price:
+                typeof product === 'object'
+                  ? Number(priceFromJSON(product.priceJSON, 1, true))
+                  : undefined,
+            }),
+          ),
         }),
       })
 
@@ -77,13 +83,13 @@ export const CheckoutPage: React.FC<{
   const { cart, cartIsEmpty, cartTotal } = useCart()
 
   useEffect(() => {
-    if (user !== null && cartIsEmpty) {
+    if (cartIsEmpty) {
       router.push('/cart')
     }
-  }, [router, user, cartIsEmpty])
+  }, [router, cartIsEmpty])
 
   useEffect(() => {
-    if (user && cart && hasMadePaymentIntent.current === false) {
+    if (cart && !cartIsEmpty && hasMadePaymentIntent.current === false) {
       hasMadePaymentIntent.current = true
 
       const makeIntent = async () => {
@@ -93,6 +99,13 @@ export const CheckoutPage: React.FC<{
             {
               method: 'POST',
               credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                items: cart?.items,
+                guestEmail: !user && guestEmail ? guestEmail : undefined,
+              }),
             },
           )
 
@@ -111,9 +124,9 @@ export const CheckoutPage: React.FC<{
 
       makeIntent()
     }
-  }, [cart, user])
+  }, [cart, user, cartIsEmpty, guestEmail])
 
-  if (!user || !stripe) return null
+  if (!stripe) return null
 
   return (
     <Fragment>

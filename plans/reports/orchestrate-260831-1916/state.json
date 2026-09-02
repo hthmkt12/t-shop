@@ -1,0 +1,6 @@
+﻿{
+  "jobs": {
+    "job-1-review": { "status": "success" },
+    "job-2-smoke":  { "status": "blocked", "reason": "destructive seed + credentials + interactive card payment; not user-approved; no runtime can perform interactive checkout" }
+  }
+}

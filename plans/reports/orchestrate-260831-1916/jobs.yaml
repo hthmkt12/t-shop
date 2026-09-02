@@ -1,0 +1,27 @@
+﻿version: 1
+concurrency: 1   # "lam lan luot" = sequential
+jobs:
+  - id: job-1-review
+    runtime: internal            # performed by coordinator (same-agent; disclosed)
+    task: review
+    cwd: F:/t-shop
+    prompt: >
+      Verify the server-side money-integrity changes are safe: confirm the
+      Payload collection beforeChange hook runs before field (required)
+      validation, so recalculateTotal can override total and re-derive
+      item.price before validation; confirm units are consistent (cents).
+    timeout: 10m
+    expected_output: Evidence-backed verdict on hook order + unit consistency.
+
+  - id: job-2-smoke
+    depends_on: [job-1-review]
+    runtime: blocked
+    task: runtime-smoke-test
+    cwd: F:/t-shop
+    destructive: true            # yarn seed drops the database
+    prompt: >
+      Seed data, run dev server + stripe webhook listener, complete a test-card
+      checkout for a variant with a price override, then verify Order.total ==
+      PaymentIntent.amount and variant stock decrement.
+    timeout: 30m
+    expected_output: One real order whose total matches the Stripe dashboard.

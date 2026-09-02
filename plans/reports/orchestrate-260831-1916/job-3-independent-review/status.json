@@ -1,0 +1,12 @@
+﻿{
+  "id": "job-3-independent-review",
+  "runtime": "claude-code CLI (headless -p)",
+  "model": "ag/gemini-3.7-flash-high (per CLI config; routed)",
+  "task": "review",
+  "capabilityTier": "C3",
+  "riskTier": "R0",
+  "status": "success",
+  "verdict": "FAIL",
+  "independent": true,
+  "note": "Different agent session/model than coordinator; auth verified live (AUTH_OK). Read-only prompt."
+}

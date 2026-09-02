@@ -1,0 +1,28 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-money-and-tracking-tests
+    runtime: internal
+    task: test
+    cwd: F:\t-shop
+    prompt: "Execute yarn test:money and yarn test:track to verify financial integrity and track-order sanitization."
+    timeout: 5m
+    expected_output: "All automated assertions pass without error."
+
+  - id: job-2-catalog-fixture-verification
+    runtime: internal
+    task: test
+    cwd: F:\t-shop
+    depends_on: [job-1-money-and-tracking-tests]
+    prompt: "Execute yarn test:catalog to verify all 4 POD fixtures (T-shirt, Hoodie, Mug, Tote)."
+    timeout: 5m
+    expected_output: "All 4 catalog fixtures validate correctly with valid variants and swatches."
+
+  - id: job-3-build-and-lint-verification
+    runtime: internal
+    task: review
+    cwd: F:\t-shop
+    depends_on: [job-2-catalog-fixture-verification]
+    prompt: "Execute yarn build:payload and yarn build:server and yarn lint to ensure clean build."
+    timeout: 10m
+    expected_output: "Build succeeds with zero TypeScript and zero ESLint errors."

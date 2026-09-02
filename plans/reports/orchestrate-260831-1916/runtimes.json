@@ -1,0 +1,10 @@
+﻿{
+  "probedAt": "2026-08-31T19:16:54.4138739+07:00",
+  "os": "win32",
+  "git": { "repo": true, "branch": "main" },
+  "node": "v24.15.0",
+  "yarn": "1.22.22",
+  "agentCLIsOnPath": ["claude", "codex", "gemini", "opencode"],
+  "note": "CLIs present on PATH but auth NOT verified this run; not dispatched."
+}
+

@@ -1,0 +1,28 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-financial-tests
+    runtime: internal
+    task: test
+    cwd: F:\t-shop
+    prompt: "Write automated tests verifying recalculateTotal fail-closed logic and track-order sanitized public response."
+    timeout: 5m
+    expected_output: "Automated test script passing all test cases for money integrity and order tracking."
+
+  - id: job-2-seed-verification
+    runtime: internal
+    task: verify
+    depends_on: [job-1-financial-tests]
+    cwd: F:\t-shop
+    prompt: "Write verification script to validate POD seed fixtures schema, colorHex swatches, stock, pricing, and variant integrity."
+    timeout: 5m
+    expected_output: "Verification script validating all 4 POD products (T-Shirt, Hoodie, Mug, Tote)."
+
+  - id: job-3-build-and-arbiter
+    runtime: internal
+    task: review
+    depends_on: [job-2-seed-verification]
+    cwd: F:\t-shop
+    prompt: "Perform complete build verification and generate the final arbiter report."
+    timeout: 5m
+    expected_output: "Passing build output and comprehensive orchestrate report."

@@ -5,7 +5,7 @@ import { trackOrder } from '../endpoints/track-order'
 async function runTrackOrderTests(): Promise<void> {
   console.log('🧪 [TEST 2] Testing /api/track-order endpoint logic...')
 
-  // Case 1: Missing orderId
+  // Case 1: Missing orderId or email
   let statusResult = 0
   let jsonResult: any = null
   const resMock1: any = {
@@ -20,8 +20,8 @@ async function runTrackOrderTests(): Promise<void> {
 
   await trackOrder({ query: {}, payload: { logger: { error: () => {} } } } as any, resMock1)
   assert.strictEqual(statusResult, 400)
-  assert.strictEqual(jsonResult?.error, 'orderId parameter is required')
-  console.log('  ✅ Pass: rejected missing orderId with 400')
+  assert.strictEqual(jsonResult?.error, 'Both orderId and email parameters are required')
+  console.log('  ✅ Pass: rejected missing orderId/email with 400')
 
   // Case 2: Order not found
   const resMock2: any = {
@@ -36,7 +36,7 @@ async function runTrackOrderTests(): Promise<void> {
 
   await trackOrder(
     {
-      query: { orderId: 'non_existent_id' },
+      query: { orderId: 'non_existent_id', email: 'test@example.com' },
       payload: {
         findByID: async () => null,
         logger: { error: () => {} },

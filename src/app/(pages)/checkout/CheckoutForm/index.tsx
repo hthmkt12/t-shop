@@ -65,6 +65,7 @@ export const CheckoutForm: React.FC<{}> = () => {
               body: JSON.stringify({
                 total: cartTotal.raw,
                 stripePaymentIntentID: paymentIntent.id,
+                guestEmail: (paymentIntent as any)?.receipt_email || undefined,
                 shippingAddress: shipping
                   ? {
                       recipientName: shipping.name,

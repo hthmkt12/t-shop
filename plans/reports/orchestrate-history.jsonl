@@ -1,0 +1,4 @@
+﻿{"run":"orchestrate-260831-1916","job":"job-1-review","runtime":"internal-coordinator","model":null,"task":"review","capabilityTier":"C3","riskTier":"R0","status":"success","timedOut":false,"attempts":1,"arbiter":"pass"}
+{"run":"orchestrate-260831-1916","job":"job-2-smoke","runtime":null,"task":"runtime-smoke-test","riskTier":"R3","status":"blocked","arbiter":"blocked"}
+{"run":"orchestrate-260831-1916","job":"job-3-independent-review","runtime":"claude-code-cli","task":"review","capabilityTier":"C3","riskTier":"R0","status":"success","verdict":"FAIL","independent":true}
+{"run":"orchestrate-260831-1916","job":"job-4-rereview","runtime":"claude-code-cli","task":"review","status":"failed","reason":"connection-refused","attempts":2}

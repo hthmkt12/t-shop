@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { Product } from '../../../payload/payload-types'
@@ -35,6 +36,7 @@ export const AddToCartButton: React.FC<{
   const { cart, addItemToCart, isProductInCart, hasInitializedCart } = useCart()
 
   const [isInCart, setIsInCart] = useState<boolean>()
+  const [showToast, setShowToast] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -42,37 +44,53 @@ export const AddToCartButton: React.FC<{
   }, [isProductInCart, product, cart, sku])
 
   return (
-    <Button
-      href={isInCart ? '/cart' : undefined}
-      type={!isInCart ? 'button' : undefined}
-      label={disabled ? 'Out of stock' : isInCart ? `✓ View in cart` : `Add to cart`}
-      el={isInCart ? 'link' : undefined}
-      appearance={appearance}
-      disabled={disabled}
-      className={[
-        className,
-        classes.addToCartButton,
-        appearance === 'default' && isInCart && classes.green,
-        !hasInitializedCart && classes.hidden,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      onClick={
-        !isInCart && !disabled
-          ? () => {
-              addItemToCart({
-                product,
-                quantity,
-                sku,
-                variantTitle,
-                customDesignUrl,
-                customText,
-              } as any)
+    <div className={classes.toastWrapper}>
+      <Button
+        href={isInCart ? '/cart' : undefined}
+        type={!isInCart ? 'button' : undefined}
+        label={disabled ? 'Out of stock' : isInCart ? `✓ In cart (View)` : `Add to cart`}
+        el={isInCart ? 'link' : undefined}
+        appearance={appearance}
+        disabled={disabled}
+        className={[
+          className,
+          classes.addToCartButton,
+          appearance === 'default' && isInCart && classes.green,
+          !hasInitializedCart && classes.hidden,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        onClick={
+          !isInCart && !disabled
+            ? () => {
+                addItemToCart({
+                  product,
+                  quantity,
+                  sku,
+                  variantTitle,
+                  customDesignUrl,
+                  customText,
+                } as any)
 
-              router.push('/cart')
-            }
-          : undefined
-      }
-    />
+                setShowToast(true)
+              }
+            : undefined
+        }
+      />
+
+      {showToast && (
+        <div className={classes.toastSuccess}>
+          <span>✓ Added to cart!</span>
+          <div className={classes.toastActions}>
+            <Link href="/cart" className={classes.toastLink}>
+              View Cart
+            </Link>
+            <Link href="/checkout" className={classes.toastLink}>
+              Checkout →
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

@@ -13,12 +13,6 @@ import { CheckoutPage } from './CheckoutPage'
 import classes from './index.module.scss'
 
 export default async function Checkout() {
-  await getMeUser({
-    nullUserRedirect: `/login?error=${encodeURIComponent(
-      'You must be logged in to checkout.',
-    )}&redirect=${encodeURIComponent('/checkout')}`,
-  })
-
   let settings: Settings | null = null
 
   try {

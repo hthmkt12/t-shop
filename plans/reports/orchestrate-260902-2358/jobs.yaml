@@ -1,0 +1,28 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-guest-checkout
+    runtime: internal
+    task: cook
+    cwd: F:/t-shop
+    prompt: "Triển khai Guest Checkout: cho phép khách vãng lai thanh toán qua Stripe không bắt buộc đăng nhập (Backend create-payment-intent, recalculateTotal guest support, frontend checkout flow)."
+    timeout: 10m
+    expected_output: "Guest checkout flow hoạt động an toàn, fail-closed, lưu đơn kèm email khách."
+
+  - id: job-2-cart-feedback
+    runtime: internal
+    task: cook
+    depends_on: [job-1-guest-checkout]
+    cwd: F:/t-shop
+    prompt: "Thêm Toast / Visual Feedback khi bấm Add-to-Cart."
+    timeout: 10m
+    expected_output: "Khách bấm Add-to-Cart có visual feedback tức thì."
+
+  - id: job-3-e2e-verify
+    runtime: internal
+    task: review
+    depends_on: [job-2-cart-feedback]
+    cwd: F:/t-shop
+    prompt: "Chạy test:money, test:track, test:catalog, verify build:server."
+    timeout: 10m
+    expected_output: "Tất cả test và build server pass 100%."

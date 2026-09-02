@@ -71,14 +71,19 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
     )
   }
 
-  // Rebuild line items from the server-side cart, ignoring the client payload.
+  // Rebuild line items from the server-side cart or verified client items (for guests).
   const userId = req.user?.id
-  if (!userId) {
-    throw new Error('recalculateTotal: no authenticated user; cannot rebuild order items.')
-  }
+  let cartItems: any[] = []
 
-  const fullUser: any = await payload.findByID({ collection: 'users', id: userId })
-  const cartItems: any[] = Array.isArray(fullUser?.cart?.items) ? fullUser.cart.items : []
+  if (userId) {
+    const fullUser: any = await payload.findByID({ collection: 'users', id: userId })
+    cartItems = Array.isArray(fullUser?.cart?.items) ? fullUser.cart.items : []
+  } else if (Array.isArray(d?.items)) {
+    // For guest checkout: client sends items array, but prices are re-derived strictly from server/Stripe
+    cartItems = d.items
+  } else {
+    throw new Error('recalculateTotal: no user or cart items provided to rebuild order.')
+  }
 
   const rebuiltItems = await Promise.all(
     cartItems.map(async (item: any) => {

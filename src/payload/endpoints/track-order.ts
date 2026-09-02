@@ -5,8 +5,8 @@ export const trackOrder: PayloadHandler = async (req, res): Promise<void> => {
   const orderId = req.query?.orderId as string
   const email = (req.query?.email as string)?.trim().toLowerCase()
 
-  if (!orderId) {
-    res.status(400).json({ error: 'orderId parameter is required' })
+  if (!orderId || !email) {
+    res.status(400).json({ error: 'Both orderId and email parameters are required' })
     return
   }
 
@@ -25,7 +25,8 @@ export const trackOrder: PayloadHandler = async (req, res): Promise<void> => {
     // Optional verification if email was supplied
     if (email) {
       const orderedByUser = typeof order.orderedBy === 'object' ? order.orderedBy : null
-      const userEmail = orderedByUser?.email?.toLowerCase()
+      const userEmail =
+        orderedByUser?.email?.toLowerCase() || (order as any)?.guestEmail?.toLowerCase()
 
       if (userEmail && userEmail !== email) {
         res.status(403).json({ error: 'Order ID does not match the provided email' })

@@ -8,7 +8,51 @@
   color: var(--theme-success-700);
 }
 
+.toastWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.toastSuccess {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: #ecfdf5;
+  border: 1px solid #10b981;
+  border-radius: 6px;
+  color: #065f46;
+  font-size: 14px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.toastActions {
+  display: flex;
+  gap: 10px;
+}
+
+.toastLink {
+  color: #047857;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hidden {
   visibility: hidden;
   opacity: 0;
 }
+

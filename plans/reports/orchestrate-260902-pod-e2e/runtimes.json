@@ -1,0 +1,11 @@
+{
+  "runtimes": [
+    {
+      "name": "internal",
+      "available": true,
+      "tier": "C3",
+      "risk": "R0",
+      "type": "subagent-coordinator"
+    }
+  ]
+}

@@ -53,8 +53,8 @@ export const TrackOrderClient: React.FC = () => {
 
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!orderId.trim()) {
-      setError('Please enter your Order ID.')
+    if (!orderId.trim() || !email.trim()) {
+      setError('Please enter both your Order ID and Order Email.')
       return
     }
 
@@ -65,7 +65,7 @@ export const TrackOrderClient: React.FC = () => {
     try {
       const queryParams = new URLSearchParams({
         orderId: orderId.trim(),
-        ...(email.trim() ? { email: email.trim() } : {}),
+        email: email.trim(),
       })
 
       const res = await fetch(
