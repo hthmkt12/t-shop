@@ -6,7 +6,7 @@ export const paymentIntentSucceeded: StripeWebhookHandler<{
     object: Stripe.PaymentIntent
   }
 }> = async args => {
-  const { event, payload, stripe } = args
+  const { event, payload } = args
 
   const paymentIntent = event.data.object
   const paymentIntentID = paymentIntent.id

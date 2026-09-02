@@ -109,7 +109,13 @@ export default buildConfig({
           },
         },
       }
-    : {}),
+    : {
+        email: {
+          fromName: 'T-Shop POD',
+          fromAddress: 'orders@t-shop.com',
+          logMockCredentials: false,
+        },
+      }),
   collections: [Pages, Products, Orders, Media, Categories, Users],
   globals: [Settings, Header, Footer],
   typescript: {

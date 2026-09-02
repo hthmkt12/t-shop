@@ -8,7 +8,7 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
   const format = (req.query?.format as string)?.toLowerCase() || 'json'
 
   // Restrict to admin users only
-  if (!user || !user.roles?.includes('admin')) {
+  if (!user?.roles?.includes('admin')) {
     res.status(403).json({ error: 'Forbidden: Admin access required to export production batch.' })
     return
   }
@@ -99,8 +99,8 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
 
       const csvLines = [
         headers.join(','),
-        ...productionRows.map(row =>
-          [
+        ...productionRows.map(row => {
+          const cells = [
             `"${row.orderId}"`,
             `"${row.createdAt}"`,
             `"${row.fulfillmentStatus}"`,
@@ -115,8 +115,9 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
             `"${row.customText.replace(/"/g, '""')}"`,
             `"${row.customDesignUrl.replace(/"/g, '""')}"`,
             `"${row.productionNotes.replace(/"/g, '""')}"`,
-          ].join(','),
-        ),
+          ]
+          return cells.join(',')
+        }),
       ]
 
       res.setHeader('Content-Type', 'text/csv; charset=utf-8')
