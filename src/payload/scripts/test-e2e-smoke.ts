@@ -138,7 +138,9 @@ async function runE2ESmokeTest(): Promise<void> {
   const updatedProduct = mockProducts['prod-tshirt-1']
   const updatedVariant = updatedProduct.variants.find((v: any) => v.sku === 'TSHIRT-BLK-M')
   assert.strictEqual(updatedVariant.stock, 13, 'Variant stock should decrease from 15 to 13')
-  console.log(`  ✅ Variant TSHIRT-BLK-M stock correctly decremented: 15 -> ${updatedVariant.stock}\n`)
+  console.log(
+    `  ✅ Variant TSHIRT-BLK-M stock correctly decremented: 15 -> ${updatedVariant.stock}\n`,
+  )
 
   // Step 3: Public Dual-Key Order Tracking API
   console.log('▶ Step 3: Verifying dual-key Order Tracking endpoint...')
@@ -185,7 +187,11 @@ async function runE2ESmokeTest(): Promise<void> {
   )
   assert.ok(trackingPayload, 'Tracking payload must be returned')
   assert.strictEqual(trackingPayload.id, createdOrder.id, 'Order ID must match')
-  assert.strictEqual(trackingPayload.fulfillmentStatus, 'in_production', 'Fulfillment status must match')
+  assert.strictEqual(
+    trackingPayload.fulfillmentStatus,
+    'in_production',
+    'Fulfillment status must match',
+  )
   assert.strictEqual(
     trackingPayload.items[0].customText,
     'Aki POD 2026',

@@ -12,6 +12,7 @@ import { updateUserPurchases } from './hooks/updateUserPurchases'
 import { dispatchFulfillmentWebhook } from './hooks/dispatchFulfillmentWebhook'
 import { LinkToPaymentIntent } from './ui/LinkToPaymentIntent'
 import { CustomDesignPreview } from './ui/CustomDesignPreview'
+import { OrderFulfillmentActions } from './ui/OrderFulfillmentActions'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
@@ -85,6 +86,16 @@ export const Orders: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Manual print-on-demand production/shipping status',
+      },
+    },
+    {
+      name: 'fulfillmentActions',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: OrderFulfillmentActions,
+        },
       },
     },
     {
