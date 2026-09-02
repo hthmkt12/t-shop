@@ -64,6 +64,13 @@ export const podHoodie: any = {
                 },
               ],
             },
+            {
+              children: [
+                {
+                  text: '\n\n📏 Size Guide (Inches):\n• M: Chest 42" | Length 28" | Sleeve 34"\n• L: Chest 46" | Length 29" | Sleeve 35"\n• XL: Chest 50" | Length 30" | Sleeve 36"\n\n🎨 Print Specifications:\n• Printable Area: 14" x 16" (Center Chest above pouch pocket)\n• Resolution: 300 DPI Recommended\n• Printing Method: Direct-to-Film (DTF) / High-Res DTG',
+                },
+              ],
+            },
           ],
           link: {
             reference: null,

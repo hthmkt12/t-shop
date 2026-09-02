@@ -45,6 +45,13 @@ export const podTote: any = {
                 },
               ],
             },
+            {
+              children: [
+                {
+                  text: '\n\n👜 Dimensions:\n• Bag Size: 15" W x 16" H x 3" Gusset\n• Handle Drop: 10" (Comfortable shoulder carry)\n\n🎨 Print Specifications:\n• Printable Area: 10" x 12" (Center Both Sides)\n• Process: Eco-friendly DTG / Screen Print Finish',
+                },
+              ],
+            },
           ],
           link: {
             reference: null,

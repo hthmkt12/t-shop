@@ -70,7 +70,14 @@ export const podTshirt: any = {
             {
               children: [
                 {
-                  text: 'Premium print-on-demand unisex tee made of ultra-soft 100% ring-spun cotton. High-density Direct-to-Garment (DTG) print process guarantees vivid color retention and washing durability.',
+                  text: 'Premium print-on-demand unisex tee made of ultra-soft 100% combed ring-spun cotton (180 GSM). Features reinforced shoulder-to-shoulder taping, seamless collar, and double-needle sleeves. High-density Direct-to-Garment (DTG) print process guarantees vivid color retention and washing durability.',
+                },
+              ],
+            },
+            {
+              children: [
+                {
+                  text: '\n\n📏 Size Guide (Inches):\n• S: Chest 36" | Length 28"\n• M: Chest 40" | Length 29"\n• L: Chest 44" | Length 30"\n• XL: Chest 48" | Length 31"\n\n🎨 Print Specifications:\n• Printable Area: 12" x 16" (Front Chest)\n• Resolution: 300 DPI Recommended\n• Supported Formats: PNG (transparent background) or high-res JPG',
                 },
               ],
             },
