@@ -21,7 +21,9 @@
     "test:money": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-financial-hook.ts",
     "test:track": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-track-endpoint.ts",
     "test:catalog": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/verify-pod-catalog.ts",
-    "test:pod": "yarn test:money && yarn test:track && yarn test:catalog",
+    "test:fulfillment": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-fulfillment-webhook.ts",
+    "test:e2e-smoke": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts ts-node src/payload/scripts/test-e2e-smoke.ts",
+    "test:pod": "yarn test:money && yarn test:track && yarn test:catalog && yarn test:fulfillment && yarn test:e2e-smoke",
     "lint": "eslint src",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload/payload.config.ts payload"

@@ -9,6 +9,7 @@ import { recalculateTotal } from './hooks/recalculateTotal'
 import { sendOrderConfirmationEmail } from './hooks/sendOrderConfirmationEmail'
 import { updateProductStock } from './hooks/updateProductStock'
 import { updateUserPurchases } from './hooks/updateUserPurchases'
+import { dispatchFulfillmentWebhook } from './hooks/dispatchFulfillmentWebhook'
 import { LinkToPaymentIntent } from './ui/LinkToPaymentIntent'
 import { CustomDesignPreview } from './ui/CustomDesignPreview'
 
@@ -26,6 +27,7 @@ export const Orders: CollectionConfig = {
       clearUserCart,
       updateProductStock,
       sendOrderConfirmationEmail,
+      dispatchFulfillmentWebhook,
     ],
   },
   access: {
