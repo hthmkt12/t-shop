@@ -6,20 +6,22 @@
 
 .input {
   width: 100%;
-  font-family: system-ui;
-  border-radius: 0;
+  font-family: inherit;
+  border-radius: var(--pod-radius-sm);
   box-shadow: none;
-  border: none;
+  border: 1px solid var(--pod-border);
   background: none;
-  background-color: var(--theme-elevation-100);
-  color: var(--theme-elevation-1000);
-  height: calc(var(--base) * 2);
-  line-height: calc(var(--base) * 2);
-  padding: 0 calc(var(--base) / 2);
-  font-size: inherit;
+  background-color: #ffffff;
+  color: var(--pod-ink);
+  height: 44px;
+  line-height: 44px;
+  padding: 0 14px;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 
   &:focus {
-    border: none;
+    border: 1px solid var(--pod-ink);
     outline: none;
   }
 
@@ -33,29 +35,38 @@
 }
 
 .asterisk {
-  color: var(--color-error-500);
+  color: var(--pod-accent-500);
 }
 
 :global([data-theme="dark"]) {
   .input {
-    background-color: var(--theme-elevation-150);
+    background-color: #141416;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+
+    &:focus {
+      border-color: #ffffff;
+    }
   }
 }
 
 .error {
-  background-color: var(--theme-error-150);
+  border-color: var(--pod-accent-500) !important;
 }
 
 .label {
-  margin-bottom: 0;
   display: block;
-  line-height: 1;
-  margin-bottom: calc(var(--base) / 2);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pod-ink-soft);
+  margin-bottom: 6px;
 }
 
 .errorMessage {
-  font-size: small;
-  line-height: 1.25;
+  font-size: 12px;
+  line-height: 1.3;
   margin-top: 4px;
-  color: red;
+  color: var(--pod-accent-500);
 }

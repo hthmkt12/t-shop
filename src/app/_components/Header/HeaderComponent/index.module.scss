@@ -1,11 +1,17 @@
 .header {
-  padding: 16px 0;
+  padding: 14px 0;
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: color-mix(in srgb, var(--theme-surface) 88%, transparent);
-  backdrop-filter: saturate(140%) blur(10px);
-  border-bottom: 1px solid var(--theme-card-border);
+  background-color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--pod-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+:global([data-theme="dark"]) .header {
+  background-color: rgba(10, 10, 10, 0.82);
 }
 
 .wrap {
@@ -13,13 +19,21 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: calc(var(--base) / 2) var(--base)
+  gap: 16px;
 }
 
 .logo {
-  width: 170px;
+  width: 130px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.75;
+  }
 }
 
-.hide { 
+.hide {
   display: none;
 }

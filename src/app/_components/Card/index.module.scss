@@ -1,40 +1,50 @@
 @import '../../_css/common';
 
 .card {
-  border-radius: var(--pod-radius-lg);
+  border-radius: var(--pod-radius-md);
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--theme-surface-raised);
-  border: 1px solid var(--theme-card-border);
-  box-shadow: var(--pod-shadow-sm);
+  background-color: #ffffff;
+  border: 1px solid var(--pod-border);
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--pod-shadow-lg);
+    transform: translateY(-2px);
+    border-color: rgba(0, 0, 0, 0.16);
+
+    img {
+      transform: scale(1.025);
+    }
+  }
+
+  img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 }
 
 .content {
-  padding: var(--pod-space-4);
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: var(--pod-space-2);
-  background-color: var(--theme-surface-raised);
+  gap: 8px;
+  background-color: transparent;
   width: 100%;
 
   @include small-break {
-    padding: var(--pod-space-3);
-    gap: var(--pod-space-1);
+    padding: 12px;
+    gap: 4px;
   }
 }
 
 .title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--pod-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -49,24 +59,31 @@
 }
 
 .priceActions {
-  gap: var(--base);
+  gap: 12px;
 }
 
 .price {
+  font-size: 15px;
   font-weight: 600;
+  color: var(--pod-ink);
   margin: 0;
 }
 
 .leader {
-  @extend %label;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pod-muted);
   display: flex;
-  gap: var(--base);
+  gap: 8px;
 }
 
 .description {
   margin: 0;
-  line-height: 24px;
-
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--pod-ink-soft);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

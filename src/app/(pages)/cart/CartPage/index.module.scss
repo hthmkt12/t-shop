@@ -1,16 +1,17 @@
 @import '../../../_css/common';
 
 .cart {
-  margin: 30px 0;
+  margin: 40px 0 80px;
 }
 
 .cartWrapper {
   display: grid;
   grid-template-columns: 65% 1fr;
-  gap: 60px;
+  gap: 48px;
 
   @include large-break {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 
@@ -18,7 +19,14 @@
   display: grid;
   grid-template-columns: 100px 2fr 1fr;
   gap: 24px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--pod-border);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pod-muted);
 
   @include small-break {
     display: none;
@@ -35,15 +43,17 @@
 }
 
 .itemsList {
-  border-top: 1px solid var(--color-dark-50);
+  border-top: 1px solid var(--pod-border);
 }
 
 .summary {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 30px 24px;
-  border: 1px solid var(--color-dark-50);
+  padding: 32px;
+  border: 1px solid var(--pod-border);
+  border-radius: var(--pod-radius-md);
+  background-color: var(--pod-surface-raised);
 }
 
 .row {
@@ -51,18 +61,25 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-dark-50);
+  border-bottom: 1px solid var(--pod-border);
+  font-size: 14px;
+  color: var(--pod-ink);
 }
 
 .orderBumpCard {
-  margin: 8px 0;
-  padding: 16px;
-  background: var(--pod-primary-50, #f6f3ff);
-  border: 1.5px dashed var(--theme-brand, #6c4cf1);
-  border-radius: 8px;
+  margin: 12px 0;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--pod-border);
+  border-radius: var(--pod-radius-md);
   display: flex;
   flex-direction: column;
   gap: 12px;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+  }
 
   .bumpHeader {
     display: flex;
@@ -70,35 +87,36 @@
     gap: 12px;
 
     span {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
     }
 
     strong {
-      font-size: 0.95rem;
-      color: var(--color-dark-900, #131118);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--pod-ink);
     }
 
     p {
       margin: 2px 0 0 0;
       font-size: 0.8rem;
-      color: var(--color-dark-500, #718096);
+      color: var(--pod-ink-soft);
     }
   }
 
   .bumpAddBtn {
     width: 100%;
     padding: 10px;
-    background: var(--theme-brand, #6c4cf1);
+    background: var(--pod-primary-500);
     color: #ffffff;
     border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 700;
+    border-radius: var(--pod-radius-pill);
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--pod-accent-500, #5639d6);
+      background: var(--pod-primary-600);
       transform: translateY(-1px);
     }
   }

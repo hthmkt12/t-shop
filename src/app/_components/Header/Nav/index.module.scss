@@ -2,15 +2,24 @@
 
 .nav {
   display: flex;
-  gap: calc(var(--base) / 4) var(--base);
+  gap: 24px;
   align-items: center;
   flex-wrap: wrap;
   opacity: 1;
-  transition: opacity 100ms linear;
+  transition: opacity 150ms ease;
   visibility: visible;
 
-  > * {
+  > a {
     text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--pod-ink-soft);
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--pod-ink);
+    }
   }
 }
 

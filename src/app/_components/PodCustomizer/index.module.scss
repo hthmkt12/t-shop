@@ -1,85 +1,87 @@
 .customizerWrapper {
   margin: var(--pod-space-6) 0;
-  padding: var(--pod-space-5);
-  background: var(--theme-surface-raised);
-  border: 1px solid var(--theme-card-border);
-  border-radius: var(--pod-radius-lg);
-  box-shadow: var(--pod-shadow-sm);
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid var(--pod-border);
+  border-radius: var(--pod-radius-md);
   display: flex;
   flex-direction: column;
-  gap: var(--pod-space-4);
+  gap: 20px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--theme-card-border);
-  padding-bottom: var(--pod-space-3);
+  border-bottom: 1px solid var(--pod-border);
+  padding-bottom: 16px;
   flex-wrap: wrap;
-  gap: var(--pod-space-2);
+  gap: 12px;
 
   h5 {
     margin: 0;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--theme-text);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--pod-ink);
     display: flex;
     align-items: center;
-    gap: var(--pod-space-2);
+    gap: 8px;
   }
 
   .headerActions {
     display: flex;
     align-items: center;
-    gap: var(--pod-space-3);
+    gap: 12px;
   }
 
   .sideToggleGroup {
     display: flex;
-    background: var(--pod-surface);
-    padding: 2px;
-    border-radius: var(--pod-radius-sm);
-    border: 1px solid var(--theme-card-border);
+    background: var(--pod-surface-raised);
+    padding: 3px;
+    border-radius: var(--pod-radius-pill);
+    border: 1px solid var(--pod-border);
   }
 
   .sideBtn {
-    padding: 4px 10px;
-    font-size: 0.75rem;
+    padding: 6px 14px;
+    font-size: 12px;
     font-weight: 600;
     background: transparent;
     border: none;
-    border-radius: var(--pod-radius-xs);
-    color: var(--theme-text-muted);
+    border-radius: var(--pod-radius-pill);
+    color: var(--pod-ink-soft);
     cursor: pointer;
     transition: all 0.15s ease;
 
     &:hover {
-      color: var(--theme-text);
+      color: var(--pod-ink);
     }
 
     &.activeSide {
-      background: var(--theme-surface-raised);
-      color: var(--theme-brand);
+      background: #ffffff;
+      color: var(--pod-ink);
       box-shadow: var(--pod-shadow-sm);
     }
   }
 
   .badge {
-    font-size: 0.75rem;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 2px 8px;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
     border-radius: var(--pod-radius-pill);
-    background: var(--pod-accent-50);
-    color: var(--pod-accent-500);
+    background: var(--pod-surface-raised);
+    color: var(--pod-ink);
+    border: 1px solid var(--pod-border);
   }
 }
 
 .stageContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--pod-space-5);
+  gap: 24px;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
@@ -90,13 +92,13 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: var(--pod-surface);
+  background: var(--pod-surface-raised);
   border-radius: var(--pod-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px dashed var(--pod-border);
+  border: 1px solid var(--pod-border);
 }
 
 .mockupBase {
@@ -126,14 +128,14 @@
   left: 30%;
   width: 40%;
   height: 48%;
-  border: 1.5px dashed var(--theme-brand);
+  border: 1.5px dashed var(--pod-ink);
   border-radius: var(--pod-radius-xs);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: rgba(108, 76, 241, 0.04);
+  background: rgba(0, 0, 0, 0.02);
   pointer-events: none;
   touch-action: none;
   user-select: none;

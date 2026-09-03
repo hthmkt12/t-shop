@@ -4,61 +4,65 @@
 .scrollRef {
   position: absolute;
   left: 0;
-  top: calc(var(--base) * -5);
+  top: -80px;
   @include mid-break {
-    top: calc(var(--base) * -2);
+    top: -48px;
   }
 }
 
 .introContent {
   position: relative;
-  margin-bottom: calc(var(--base) * 2);
+  margin-bottom: 32px;
 
   @include mid-break {
-    margin-bottom: var(--base);
+    margin-bottom: 24px;
   }
 }
 
 .resultCountWrapper {
   display: flex;
-  margin-bottom: calc(var(--base) * 2);
+  margin-bottom: 24px;
 
   @include mid-break {
-    margin-bottom: var(--base);
+    margin-bottom: 16px;
   }
 }
 
 .pageRange {
-  margin-bottom: var(--base);
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--pod-ink-soft);
 
   @include mid-break {
-    margin-bottom: var(--base);
+    margin-bottom: 16px;
   }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(30%, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
   padding: 0;
   width: 100%;
 
-  @include mid-break {
-    gap: 20px;
+  @include large-break {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   @include small-break {
-    grid-template-columns: 100%;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
 .pagination {
-  margin-top: calc(var(--base) * 2);
+  margin-top: 48px;
   display: flex;
   justify-content: center;
 
   @include mid-break {
-    margin-top: var(--base);
+    margin-top: 32px;
   }
 }
 
@@ -83,9 +87,10 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background-color: var(--color-dark-100, #e2e8f0);
-  color: var(--color-dark-900, #0f172a);
-  border-radius: 16px;
+  background-color: var(--pod-surface-raised);
+  color: var(--pod-ink);
+  border: 1px solid var(--pod-border);
+  border-radius: var(--pod-radius-pill);
   font-size: 13px;
   font-weight: 500;
 
@@ -95,7 +100,7 @@
     cursor: pointer;
     font-size: 14px;
     line-height: 1;
-    color: var(--color-dark-500, #64748b);
+    color: var(--pod-muted);
     padding: 0;
     margin: 0;
     display: flex;
@@ -103,7 +108,7 @@
     justify-content: center;
 
     &:hover {
-      color: var(--color-dark-900, #0f172a);
+      color: var(--pod-ink);
     }
   }
 }
@@ -111,14 +116,14 @@
 .clearAllTextBtn {
   background: none;
   border: none;
-  color: var(--color-dark-500, #64748b);
+  color: var(--pod-muted);
   font-size: 13px;
   text-decoration: underline;
   cursor: pointer;
   padding: 4px 6px;
 
   &:hover {
-    color: var(--color-dark-900, #0f172a);
+    color: var(--pod-ink);
   }
 }
 

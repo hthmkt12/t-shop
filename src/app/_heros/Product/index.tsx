@@ -41,7 +41,8 @@ export const ProductHero: React.FC<{
           item_id: product.id,
           item_name: product.title,
           price: priceVal,
-          category: categories?.[0] && typeof categories[0] === 'object' ? categories[0].title : undefined,
+          category:
+            categories?.[0] && typeof categories[0] === 'object' ? categories[0].title : undefined,
         },
       })
     }

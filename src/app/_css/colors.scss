@@ -96,62 +96,61 @@
   --color-green-500: rgba(60, 209, 57, 1);
 
   // ------------------------------------------------------------------
-  // POD (Print-on-Demand) design tokens
-  // Creative-commerce palette: vivid violet primary + coral accent.
+  // POD (Print-on-Demand) design tokens - Apple / Nike Minimalist
   // ------------------------------------------------------------------
 
-  // Primary — Violet (brand)
-  --pod-primary-50: rgb(238, 233, 254);
-  --pod-primary-100: rgb(221, 212, 253);
-  --pod-primary-200: rgb(196, 181, 251);
-  --pod-primary-300: rgb(168, 145, 249);
-  --pod-primary-400: rgb(140, 110, 246);
-  --pod-primary-500: rgb(108, 76, 241); // #6C4CF1 core brand
-  --pod-primary-600: rgb(90, 60, 214);
-  --pod-primary-700: rgb(72, 47, 178);
-  --pod-primary-800: rgb(55, 36, 138);
-  --pod-primary-900: rgb(39, 26, 99);
+  // Primary Monochrome
+  --pod-primary-50: rgb(245, 245, 247);
+  --pod-primary-100: rgb(235, 235, 238);
+  --pod-primary-200: rgb(210, 210, 215);
+  --pod-primary-300: rgb(174, 174, 178);
+  --pod-primary-400: rgb(110, 110, 115);
+  --pod-primary-500: rgb(17, 17, 17);   // #111111 Core primary
+  --pod-primary-600: rgb(0, 0, 0);       // #000000 True black
+  --pod-primary-700: rgb(0, 0, 0);
+  --pod-primary-800: rgb(0, 0, 0);
+  --pod-primary-900: rgb(0, 0, 0);
 
-  // Accent — Coral (CTA / highlights)
-  --pod-accent-50: rgb(255, 236, 241);
-  --pod-accent-100: rgb(255, 214, 226);
-  --pod-accent-300: rgb(255, 150, 178);
-  --pod-accent-500: rgb(255, 92, 138); // #FF5C8A
-  --pod-accent-600: rgb(230, 74, 118);
-  --pod-accent-700: rgb(194, 57, 96);
+  // Accent — High-fashion crimson & emerald
+  --pod-accent-50: rgb(255, 241, 242);
+  --pod-accent-100: rgb(255, 228, 230);
+  --pod-accent-300: rgb(253, 164, 175);
+  --pod-accent-500: rgb(224, 62, 62);   // #E03E3E Crisp red sale badge
+  --pod-accent-600: rgb(190, 45, 45);
+  --pod-accent-700: rgb(153, 27, 27);
 
-  // Support — Amber (badges: sale / limited)
-  --pod-amber-400: rgb(255, 191, 71);
-  --pod-amber-500: rgb(255, 168, 32); // #FFA820
+  // Support — Amber / Gold
+  --pod-amber-400: rgb(245, 158, 11);
+  --pod-amber-500: rgb(217, 119, 6);
 
-  // Ink & surfaces
-  --pod-ink: rgb(19, 17, 24);        // primary text
-  --pod-ink-soft: rgb(74, 70, 88);   // secondary text
-  --pod-muted: rgb(129, 124, 145);   // captions / meta
-  --pod-surface: rgb(247, 246, 251); // page background
-  --pod-surface-raised: rgb(255, 255, 255);
-  --pod-border: rgb(230, 228, 238);
+  // Ink & surfaces (Apple standard)
+  --pod-ink: rgb(17, 17, 17);           // #111111 primary text
+  --pod-ink-soft: rgb(110, 110, 115);   // #6E6E73 secondary text
+  --pod-muted: rgb(142, 142, 147);      // #8E8E93 captions / meta
+  --pod-surface: rgb(255, 255, 255);    // #FFFFFF pure clean white background
+  --pod-surface-raised: rgb(245, 245, 247); // #F5F5F7 subtle card/section
+  --pod-border: rgba(0, 0, 0, 0.08);    // ultra-subtle border 1px
 
-  // Gradient (hero / mockups)
-  --pod-gradient: linear-gradient(120deg, rgb(108, 76, 241) 0%, rgb(255, 92, 138) 100%);
-  --pod-gradient-soft: linear-gradient(120deg, rgb(238, 233, 254) 0%, rgb(255, 236, 241) 100%);
+  // Gradients (minimalist, subtle)
+  --pod-gradient: linear-gradient(180deg, rgba(17, 17, 17, 0.95) 0%, rgba(17, 17, 17, 1) 100%);
+  --pod-gradient-soft: linear-gradient(180deg, rgb(255, 255, 255) 0%, rgb(245, 245, 247) 100%);
 
-  // Radius scale
-  --pod-radius-xs: 6px;
-  --pod-radius-sm: 10px;
-  --pod-radius-md: 16px;
-  --pod-radius-lg: 24px;
-  --pod-radius-xl: 32px;
+  // Radius scale (clean, subtle Apple radii)
+  --pod-radius-xs: 4px;
+  --pod-radius-sm: 6px;
+  --pod-radius-md: 8px;
+  --pod-radius-lg: 12px;
+  --pod-radius-xl: 16px;
   --pod-radius-pill: 999px;
 
-  // Elevation / shadow scale
-  --pod-shadow-sm: 0 1px 2px rgba(19, 17, 24, 0.06), 0 1px 3px rgba(19, 17, 24, 0.08);
-  --pod-shadow-md: 0 6px 16px rgba(19, 17, 24, 0.08), 0 2px 6px rgba(19, 17, 24, 0.06);
-  --pod-shadow-lg: 0 18px 40px rgba(19, 17, 24, 0.14), 0 6px 14px rgba(19, 17, 24, 0.08);
-  --pod-shadow-primary: 0 10px 24px rgba(108, 76, 241, 0.32);
-  --pod-shadow-accent: 0 10px 24px rgba(255, 92, 138, 0.32);
+  // Elevation / shadow scale (clean subtle flat)
+  --pod-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --pod-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --pod-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --pod-shadow-primary: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --pod-shadow-accent: 0 4px 16px rgba(224, 62, 62, 0.16);
 
-  // Spacing scale (4px base)
+  // Spacing scale (8pt standard)
   --pod-space-1: 4px;
   --pod-space-2: 8px;
   --pod-space-3: 12px;

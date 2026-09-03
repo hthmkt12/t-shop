@@ -135,7 +135,17 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
 
   const handleScaleChange = (val: number) => {
     setScale(val)
-    updateParent(artworkUrl, artworkName, val, rotation, customText, textColor, posX, posY, activeSide)
+    updateParent(
+      artworkUrl,
+      artworkName,
+      val,
+      rotation,
+      customText,
+      textColor,
+      posX,
+      posY,
+      activeSide,
+    )
   }
 
   const handleRotationChange = (val: number) => {
@@ -150,7 +160,17 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
 
   const handleColorChange = (color: string) => {
     setTextColor(color)
-    updateParent(artworkUrl, artworkName, scale, rotation, customText, color, posX, posY, activeSide)
+    updateParent(
+      artworkUrl,
+      artworkName,
+      scale,
+      rotation,
+      customText,
+      color,
+      posX,
+      posY,
+      activeSide,
+    )
   }
 
   const handleSideToggle = (side: 'front' | 'back') => {
@@ -180,7 +200,17 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     try {
       ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
     } catch {}
-    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, posX, posY, activeSide)
+    updateParent(
+      artworkUrl,
+      artworkName,
+      scale,
+      rotation,
+      customText,
+      textColor,
+      posX,
+      posY,
+      activeSide,
+    )
   }
 
   const handleResetPosition = () => {
@@ -255,7 +285,9 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                 alt="Uploaded Artwork"
                 className={classes.uploadedImage}
                 style={{
-                  transform: `translate3d(${posX}px, ${posY}px, 0) scale(${scale / 100}) rotate(${rotation}deg)`,
+                  transform: `translate3d(${posX}px, ${posY}px, 0) scale(${
+                    scale / 100
+                  }) rotate(${rotation}deg)`,
                 }}
                 draggable={false}
               />
@@ -290,7 +322,9 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
         <div className={classes.controlsPanel}>
           {(posX !== 0 || posY !== 0) && (
             <div className={classes.dragStatusNotice}>
-              <span>✋ Dragged: X: {posX}px, Y: {posY}px</span>
+              <span>
+                ✋ Dragged: X: {posX}px, Y: {posY}px
+              </span>
               <button type="button" onClick={handleResetPosition} className={classes.resetPosBtn}>
                 Reset Center
               </button>
