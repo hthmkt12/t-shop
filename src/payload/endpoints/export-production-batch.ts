@@ -17,7 +17,9 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
 
   // Whitelist status filter parameter
   if (!VALID_STATUSES.includes(status)) {
-    res.status(400).json({ error: `Invalid status parameter. Must be one of: ${VALID_STATUSES.join(', ')}` })
+    res
+      .status(400)
+      .json({ error: `Invalid status parameter. Must be one of: ${VALID_STATUSES.join(', ')}` })
     return
   }
 

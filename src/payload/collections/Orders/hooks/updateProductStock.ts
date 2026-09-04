@@ -3,7 +3,12 @@ import type { AfterChangeHook } from 'payload/dist/collections/config/types'
 
 import type { Order } from '../../../payload-types'
 
-export const updateProductStock: AfterChangeHook<Order> = async ({ doc, previousDoc, req, operation }) => {
+export const updateProductStock: AfterChangeHook<Order> = async ({
+  doc,
+  previousDoc,
+  req,
+  operation,
+}) => {
   const { payload } = req
 
   // Case 1: Deduct stock on Order creation
@@ -68,7 +73,13 @@ export const updateProductStock: AfterChangeHook<Order> = async ({ doc, previous
   const wasCancelled = previousDoc?.fulfillmentStatus === 'cancelled'
   const isNowCancelled = doc.fulfillmentStatus === 'cancelled'
 
-  if (operation === 'update' && isNowCancelled && !wasCancelled && doc.items && Array.isArray(doc.items)) {
+  if (
+    operation === 'update' &&
+    isNowCancelled &&
+    !wasCancelled &&
+    doc.items &&
+    Array.isArray(doc.items)
+  ) {
     for (const item of doc.items) {
       const productId = typeof item.product === 'object' ? item.product.id : item.product
       const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1
@@ -106,7 +117,9 @@ export const updateProductStock: AfterChangeHook<Order> = async ({ doc, previous
                 variants: updatedVariants,
               },
             })
-            payload.logger.info(`Restocked +${quantity} for variant ${itemSku} on order cancellation`)
+            payload.logger.info(
+              `Restocked +${quantity} for variant ${itemSku} on order cancellation`,
+            )
           }
         } else if (typeof product.stock === 'number') {
           await payload.update({
@@ -116,7 +129,9 @@ export const updateProductStock: AfterChangeHook<Order> = async ({ doc, previous
               stock: product.stock + quantity,
             },
           })
-          payload.logger.info(`Restocked +${quantity} for product ${productId} on order cancellation`)
+          payload.logger.info(
+            `Restocked +${quantity} for product ${productId} on order cancellation`,
+          )
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err)
