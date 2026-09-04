@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import { Order } from '../../../../payload/payload-types'
 import { Button } from '../../../_components/Button'
 import { RenderParams } from '../../../_components/RenderParams'
+import { SERVER_URL } from '../../../_api/shared'
 import { formatDateTime } from '../../../_utilities/formatDateTime'
 import { getMeUser } from '../../../_utilities/getMeUser'
 import { mergeOpenGraph } from '../../../_utilities/mergeOpenGraph'
@@ -22,7 +23,7 @@ export default async function Orders() {
   let orders: Order[] | null = null
 
   try {
-    orders = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
+    orders = await fetch(`${SERVER_URL}/api/orders`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `JWT ${token}`,

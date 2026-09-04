@@ -9,6 +9,7 @@ import { Gutter } from '../../../_components/Gutter'
 import { HR } from '../../../_components/HR'
 import { Media } from '../../../_components/Media'
 import { Price } from '../../../_components/Price'
+import { SERVER_URL } from '../../../_api/shared'
 import { formatDateTime } from '../../../_utilities/formatDateTime'
 import { getMeUser } from '../../../_utilities/getMeUser'
 import { mergeOpenGraph } from '../../../_utilities/mergeOpenGraph'
@@ -37,7 +38,7 @@ export default async function Order({ params: { id } }) {
   let order: Order | null = null
 
   try {
-    order = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${id}`, {
+    order = await fetch(`${SERVER_URL}/api/orders/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `JWT ${token}`,

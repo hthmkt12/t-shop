@@ -12,6 +12,7 @@ services:
     environment:
       - PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3002
       - NEXT_PUBLIC_SERVER_URL=http://localhost:3002
+      - INTERNAL_SERVER_URL=http://127.0.0.1:3000
     env_file:
       - .env.staging
     volumes:
