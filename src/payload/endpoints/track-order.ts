@@ -22,16 +22,26 @@ export const trackOrder: PayloadHandler = async (req, res): Promise<void> => {
       return
     }
 
-    // Optional verification if email was supplied
-    if (email) {
-      const orderedByUser = typeof order.orderedBy === 'object' ? order.orderedBy : null
-      const userEmail =
-        orderedByUser?.email?.toLowerCase() || (order as any)?.guestEmail?.toLowerCase()
+    // Strict verification: email must match user email or guest checkout email
+    let userEmail: string | undefined
+    if (typeof order.orderedBy === 'object' && order.orderedBy && 'email' in order.orderedBy) {
+      userEmail = (order.orderedBy as { email?: string })?.email?.toLowerCase()
+    } else if (typeof order.orderedBy === 'string' && order.orderedBy) {
+      const user = await payload.findByID({
+        collection: 'users',
+        id: order.orderedBy,
+        depth: 0,
+      })
+      userEmail = user?.email?.toLowerCase()
+    }
 
-      if (userEmail && userEmail !== email) {
-        res.status(403).json({ error: 'Order ID does not match the provided email' })
-        return
-      }
+    if (!userEmail && (order as any)?.guestEmail) {
+      userEmail = (order as any).guestEmail.toLowerCase()
+    }
+
+    if (!userEmail || userEmail !== email) {
+      res.status(403).json({ error: 'Order ID does not match the provided email' })
+      return
     }
 
     // Return sanitized public tracking info

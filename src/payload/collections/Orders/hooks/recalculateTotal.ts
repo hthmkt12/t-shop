@@ -113,7 +113,8 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
             try {
               const prices = await stripe.prices.list({
                 product: product.stripeProductID,
-                limit: 100,
+                active: true,
+                limit: 10,
               })
               const liveUnitAmount = prices.data[0]?.unit_amount
               if (typeof liveUnitAmount === 'number') {

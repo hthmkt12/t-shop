@@ -1,15 +1,23 @@
 import type { PayloadHandler } from 'payload/config'
 
+const VALID_STATUSES = ['pending', 'in_production', 'shipped', 'delivered', 'cancelled']
+
 // Endpoint for print production workshop to batch export orders ready for printing.
 // Returns CSV or JSON containing Order ID, Recipient, Variant SKU, Custom Text, and Artwork URLs.
 export const exportProductionBatch: PayloadHandler = async (req, res): Promise<void> => {
   const { user, payload } = req
-  const status = (req.query?.status as string) || 'in_production'
+  const status = ((req.query?.status as string) || 'in_production').trim().toLowerCase()
   const format = (req.query?.format as string)?.toLowerCase() || 'json'
 
   // Restrict to admin users only
   if (!user?.roles?.includes('admin')) {
     res.status(403).json({ error: 'Forbidden: Admin access required to export production batch.' })
+    return
+  }
+
+  // Whitelist status filter parameter
+  if (!VALID_STATUSES.includes(status)) {
+    res.status(400).json({ error: `Invalid status parameter. Must be one of: ${VALID_STATUSES.join(', ')}` })
     return
   }
 
@@ -21,8 +29,8 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
           equals: status,
         },
       },
-      limit: 500,
-      depth: 2,
+      limit: 200,
+      depth: 1,
     })
 
     const productionRows: Array<{
@@ -121,6 +129,7 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
       ]
 
       res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+      res.setHeader('X-Content-Type-Options', 'nosniff')
       res.setHeader(
         'Content-Disposition',
         `attachment; filename="pod-production-batch-${status}-${new Date()

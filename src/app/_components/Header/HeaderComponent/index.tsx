@@ -22,8 +22,9 @@ const HeaderComponent = ({ header }: { header: Header }) => {
         .join(' ')}
     >
       <Gutter className={classes.wrap}>
-        <Link href="/">
-          <Image src="/logo-black.svg" alt="logo" width={170} height={50} />
+        <Link href="/" className={classes.logoLink}>
+          <Image src="/logo-black.svg" alt="logo" width={170} height={50} className={classes.logoLight} />
+          <Image src="/logo-white.svg" alt="logo" width={170} height={50} className={classes.logoDark} />
         </Link>
 
         <HeaderNav header={header} />

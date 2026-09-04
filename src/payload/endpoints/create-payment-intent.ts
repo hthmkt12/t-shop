@@ -140,7 +140,8 @@ export const createPaymentIntent: PayloadHandler = async (req, res): Promise<voi
           try {
             const prices = await stripe.prices.list({
               product: fullProduct.stripeProductID,
-              limit: 100,
+              active: true,
+              limit: 10,
             })
             const liveUnitAmount = prices.data[0]?.unit_amount
             if (typeof liveUnitAmount === 'number') {

@@ -8,7 +8,10 @@ services:
     image: t-shop-pod:staging
     restart: always
     ports:
-      - '3000:3000'
+      - '3002:3000'
+    environment:
+      - PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3002
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:3002
     env_file:
       - .env.staging
     volumes:

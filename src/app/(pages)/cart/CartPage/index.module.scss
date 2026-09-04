@@ -69,7 +69,7 @@
 .orderBumpCard {
   margin: 12px 0;
   padding: 20px;
-  background: #ffffff;
+  background: var(--theme-surface-raised, #ffffff);
   border: 1px solid var(--pod-border);
   border-radius: var(--pod-radius-md);
   display: flex;

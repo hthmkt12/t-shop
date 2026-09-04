@@ -62,6 +62,7 @@ export const Orders: CollectionConfig = {
       label: 'Stripe Payment Intent ID',
       type: 'text',
       index: true,
+      unique: true,
       admin: {
         position: 'sidebar',
         components: {

@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import type { AfterChangeHook } from 'payload/dist/collections/config/types'
 import type { Order } from '../../../payload-types'
 
@@ -61,6 +62,8 @@ export const dispatchFulfillmentWebhook: AfterChangeHook<Order> = async args => 
       },
     }
 
+    const bodyString = JSON.stringify(payloadBody)
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'User-Agent': 'T-Shop-POD-Fulfillment/1.0',
@@ -68,12 +71,17 @@ export const dispatchFulfillmentWebhook: AfterChangeHook<Order> = async args => 
 
     if (webhookSecret) {
       headers['X-Fulfillment-Secret'] = webhookSecret
+      const hmacSignature = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(bodyString)
+        .digest('hex')
+      headers['X-Fulfillment-Signature'] = `sha256=${hmacSignature}`
     }
 
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers,
-      body: JSON.stringify(payloadBody),
+      body: bodyString,
     })
 
     if (!response.ok) {

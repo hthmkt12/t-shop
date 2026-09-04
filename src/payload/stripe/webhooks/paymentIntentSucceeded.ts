@@ -110,7 +110,8 @@ export const paymentIntentSucceeded: StripeWebhookHandler<{
       }),
     )
 
-    // Create the order as fallback
+    // Create the order as fallback.
+    // Use the verified PaymentIntent amount directly for the order total.
     const newOrder = await payload.create({
       collection: 'orders',
       data: {

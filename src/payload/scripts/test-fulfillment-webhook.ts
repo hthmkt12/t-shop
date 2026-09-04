@@ -89,7 +89,11 @@ async function runFulfillmentWebhookTests(): Promise<void> {
     'https://r2.tshop.com/designs/hoodie-art.png',
   )
   assert.strictEqual(dispatchedHeaders['X-Fulfillment-Secret'], 'secret_workshop_token_123')
-  console.log('  ✅ Pass: Webhook dispatched with accurate recipient, SKU, and artwork URL')
+  assert.ok(
+    dispatchedHeaders['X-Fulfillment-Signature']?.startsWith('sha256='),
+    'HMAC signature header must be present',
+  )
+  console.log('  ✅ Pass: Webhook dispatched with accurate recipient, SKU, and HMAC signature')
 
   // Case 3: Transition status to in_production on update
   dispatchedBody = null

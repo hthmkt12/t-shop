@@ -59,7 +59,7 @@
     }
 
     &.activeSide {
-      background: #ffffff;
+      background: var(--theme-surface-raised, #ffffff);
       color: var(--pod-ink);
       box-shadow: var(--pod-shadow-sm);
     }
