@@ -65,7 +65,14 @@ export const ProductHero: React.FC<{
       </div>
 
       <div className={classes.details}>
-        <h3 className={classes.title}>{title}</h3>
+        <div className={classes.trustTagRow}>
+          <span className={classes.bestsellerTag}>BÁN CHẠY NHẤT</span>
+          <span className={classes.ratingTag}>
+            ★★★★★ 4.9 <small>(340+ đánh giá)</small>
+          </span>
+        </div>
+
+        <h1 className={classes.title}>{title}</h1>
 
         <div className={classes.categoryWrapper}>
           <div className={classes.categories}>
@@ -141,17 +148,25 @@ export const ProductHero: React.FC<{
           </div>
         )}
 
-        <Price
-          product={product}
-          button={false}
-          priceOverride={totalPriceCents > 0 ? totalPriceCents : undefined}
-        />
+        <div className={classes.priceBlock}>
+          <div>
+            <Price
+              product={product}
+              button={false}
+              priceOverride={totalPriceCents > 0 ? totalPriceCents : undefined}
+            />
 
-        {petSurchargeCents > 0 && (
-          <p style={{ fontSize: '13px', color: 'var(--theme-brand, #6c4cf1)', marginTop: '-8px', fontWeight: 600 }}>
-            Đã bao gồm phụ phí in PET: +${(petSurchargeCents / 100).toFixed(2)}
-          </p>
-        )}
+            {petSurchargeCents > 0 && (
+              <p style={{ fontSize: '13px', color: '#0071e3', marginTop: '4px', fontWeight: 600 }}>
+                ✓ Đã bao gồm phụ phí in PET: +${(petSurchargeCents / 100).toFixed(2)}
+              </p>
+            )}
+          </div>
+          <div className={classes.wholesalePrompt}>
+            <span>Chiết khấu sỉ đến <strong>25%</strong></span>
+            <div>In từ 6 áo nhận giá xưởng</div>
+          </div>
+        </div>
 
         <div className={classes.description}>
           <h6>Description</h6>

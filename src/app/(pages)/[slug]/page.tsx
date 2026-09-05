@@ -11,19 +11,15 @@ import { Blocks } from '../../_components/Blocks'
 import { Gutter } from '../../_components/Gutter'
 import { Hero } from '../../_components/Hero'
 import { generateMeta } from '../../_utilities/generateMeta'
-
-// Payload Cloud caches all files through Cloudflare, so we don't need Next.js to cache them as well
-// This means that we can turn off Next.js data caching and instead rely solely on the Cloudflare CDN
-// To do this, we include the `no-cache` header on the fetch requests used to get the data for this page
-// But we also need to force Next.js to dynamically render this page on each request for preview mode to work
-// See https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
-// If you are not using Payload Cloud then this line can be removed, see `../../../README.md#cache`
-export const dynamic = 'force-dynamic'
-
 import Categories from '../../_components/Categories'
+import { FashionPodHero } from '../../_components/FashionPodHero'
 import { PodShowcase } from '../../_components/PodShowcase'
+import { PodProductCatalog } from '../../_components/PodProductCatalog'
+import { BulkDiscountCalculator } from '../../_components/BulkDiscountCalculator'
+import { PetTechShowcase } from '../../_components/PetTechShowcase'
+import { CustomerReviews } from '../../_components/CustomerReviews'
 
-import classes from './index.module.scss'
+export const dynamic = 'force-dynamic'
 
 export default async function Page({ params: { slug = 'home' } }) {
   const { isEnabled: isDraftMode } = draftMode()
@@ -57,13 +53,24 @@ export default async function Page({ params: { slug = 'home' } }) {
     <React.Fragment>
       {slug === 'home' ? (
         <section>
-          <Hero {...hero} />
-
-          <Gutter className={classes.home}>
-            <Categories categories={categories} />
-          </Gutter>
+          {/* Commercial POD Storefront */}
+          <FashionPodHero />
 
           <PodShowcase />
+
+          <PodProductCatalog />
+
+          <BulkDiscountCalculator />
+
+          <PetTechShowcase />
+
+          <CustomerReviews />
+
+          {categories && categories.length > 0 && (
+            <Gutter>
+              <Categories categories={categories} />
+            </Gutter>
+          )}
         </section>
       ) : (
         <>

@@ -1,6 +1,5 @@
-'use client'
 import React, { useEffect, useMemo, useState } from 'react'
-
+import Link from 'next/link'
 import classes from './index.module.scss'
 
 const Promotion = () => {
@@ -31,31 +30,38 @@ const Promotion = () => {
 
       if (timeDifference === 0) {
         clearInterval(timerInterval)
-        // You can add code here to handle what happens when the target date is reached.
       }
     }, 1000)
 
     return () => {
-      clearInterval(timerInterval) // Cleanup the interval when the component unmounts.
+      clearInterval(timerInterval)
     }
   }, [targetDate])
 
   return (
     <section className={classes.promotion}>
-      <div className={classes.textBox}>
-        <h3 className={classes.title}>Deals of the Month</h3>
-        <p>
-          Get ready for a shopping experience like never before with our Deals of the Month! Every
-          purchase comes with exclusive perks and offers, making this month a celebration of savvy
-          choices and amazing deals. Don't miss out! 🎁🛒
-        </p>
+      <div className={classes.box}>
+        <div className={classes.textCol}>
+          <span className={classes.eyebrow}>LIMITED PET LAUNCH EVENT</span>
+          <h3 className={classes.title}>Complimentary A3 Front/Back Print Surcharge</h3>
+          <p className={classes.desc}>
+            For a limited window, enjoy zero extra print surcharges on oversized Direct-to-Film transfer prints
+            across all heavyweight hoodies and boxy tees.
+          </p>
+          <Link href="/products" className={classes.actionBtn}>
+            Claim Print Offer
+          </Link>
+        </div>
 
-        <ul className={classes.stats}>
-          <StatBox label="Days" value={time.days} />
-          <StatBox label="Hours" value={time.hours} />
-          <StatBox label="Minutes" value={time.minutes} />
-          <StatBox label="Seconds" value={time.seconds} />
-        </ul>
+        <div className={classes.timerCol}>
+          <span className={classes.timerLabel}>OFFER EXPIRES IN</span>
+          <ul className={classes.stats}>
+            <StatBox label="Days" value={time.days} />
+            <StatBox label="Hours" value={time.hours} />
+            <StatBox label="Mins" value={time.minutes} />
+            <StatBox label="Secs" value={time.seconds} />
+          </ul>
+        </div>
       </div>
     </section>
   )
@@ -63,8 +69,8 @@ const Promotion = () => {
 
 const StatBox = ({ label, value }: { label: string; value: number }) => (
   <li className={classes.statBox}>
-    <h4>{value}</h4>
-    <p>{label}</p>
+    <span className={classes.statVal}>{String(value).padStart(2, '0')}</span>
+    <span className={classes.statSub}>{label}</span>
   </li>
 )
 

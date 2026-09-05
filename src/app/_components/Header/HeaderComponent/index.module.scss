@@ -1,49 +1,134 @@
-.header {
-  padding: 16px 0;
+@use '../../../_css/queries.scss' as *;
+
+.headerWrapper {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  z-index: 1000;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-:global([data-theme="dark"]) .header {
-  background-color: rgba(10, 10, 10, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+:global([data-theme="dark"]) .headerWrapper {
+  background-color: #0f1013;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+// 1. Top Announcement Promo Bar
+.promoBar {
+  background: #0071e3;
+  color: #ffffff;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  @include small-break {
+    flex-direction: column;
+    text-align: center;
+    padding: 6px 12px;
+  }
+}
+
+.promoContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+
+  @include small-break {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+.promoIcon {
+  font-size: 14px;
+}
+
+.promoText {
+  letter-spacing: 0.01em;
+
+  strong {
+    color: #ffeb3b;
+  }
+}
+
+.highlightTag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.promoActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @include small-break {
+    display: none;
+  }
+}
+
+.hotlineText {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.closePromoBtn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+// 2. Main Commercial Header
+.mainHeader {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+:global([data-theme="dark"]) .mainHeader {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
 }
 
 .logoLink {
-  width: 130px;
-  height: auto;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.15s ease;
+  text-decoration: none;
+  flex-shrink: 0;
+}
 
-  &:hover {
-    opacity: 0.75;
-  }
+.brandWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .logoLight {
   display: block;
-  width: 100%;
+  width: 130px;
   height: auto;
 }
 
 .logoDark {
   display: none;
-  width: 100%;
+  width: 130px;
   height: auto;
 }
 
@@ -55,6 +140,183 @@
   display: block;
 }
 
-.hide {
-  display: none;
+.brandTagline {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #0071e3;
+  text-transform: uppercase;
+}
+
+// Search form
+.searchForm {
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  @include mid-break {
+    max-width: 260px;
+  }
+
+  @include small-break {
+    display: none;
+  }
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 42px 10px 16px;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  font-size: 13px;
+  background-color: #f8fafc;
+  color: #000000;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: #0071e3;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
+  }
+}
+
+:global([data-theme="dark"]) .searchInput {
+  background-color: #1a1b1e;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+
+  &:focus {
+    border-color: #0071e3;
+    background-color: #222327;
+  }
+}
+
+.searchBtn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #86868b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:hover {
+    color: #0071e3;
+  }
+}
+
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.trackOrderLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #0071e3;
+  }
+
+  @include small-break {
+    display: none;
+  }
+}
+
+:global([data-theme="dark"]) .trackOrderLink {
+  color: #9ca3af;
+
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+// 3. Category Sub-Navigation Bar
+.categoryBar {
+  background-color: #f8fafc;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 8px 0;
+
+  @include small-break {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+:global([data-theme="dark"]) .categoryBar {
+  background-color: #141518;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.categoryWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.categoryList {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.categoryItem {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #0071e3;
+  }
+}
+
+:global([data-theme="dark"]) .categoryItem {
+  color: #d1d5db;
+
+  &:hover {
+    color: #ffffff;
+  }
+}
+
+.instantDesignBtn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: #ff5500;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: #e04b00;
+    transform: scale(1.02);
+  }
+
+  @include small-break {
+    display: none;
+  }
 }

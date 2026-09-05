@@ -16,7 +16,6 @@ import { ImageMetrics, useFabricCanvas } from './use-fabric-canvas'
 export type CustomDesignData = {
   artworkUrl?: string
   artworkName?: string
-  // Legacy fields kept for backward compatibility with CartItem / Orders schema
   scale: number
   rotation: number
   positionX?: number
@@ -24,15 +23,12 @@ export type CustomDesignData = {
   customText?: string
   textColor: string
   activeSide?: 'front' | 'back'
-  // Fabric.js extended fields (active side only — kept for back-compat)
   fabricJson?: string
   previewDataUrl?: string
-  // Fabric.js per-side fields — use these for cart/order persistence, not the two above
   fabricJsonFront?: string
   fabricJsonBack?: string
   previewDataUrlFront?: string
   previewDataUrlBack?: string
-  // In PET pricing configurations
   petPrintSize?: PetPrintSize
   petSurcharge?: number
 }
@@ -43,7 +39,7 @@ type Props = {
   onDesignChange?: (design: CustomDesignData | null) => void
 }
 
-const TEXT_COLORS = ['#131118', '#FFFFFF', '#6C4CF1', '#FF5C8A', '#FFA820', '#10B981']
+const TEXT_COLORS = ['#000000', '#FFFFFF', '#0071E3', '#E03E3E', '#F59E0B', '#10B981']
 
 export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesignChange }) => {
   const { trackEvent } = useAnalytics()
@@ -53,15 +49,13 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [customText, setCustomText] = useState<string>('')
-  const [textColor, setTextColor] = useState<string>('#131118')
+  const [textColor, setTextColor] = useState<string>('#000000')
   const [activeSide, setActiveSide] = useState<'front' | 'back'>('front')
   const [dpiAssessment, setDpiAssessment] = useState<DpiAssessment | null>(null)
   const [petPrintSize, setPetPrintSize] = useState<PetPrintSize>('chest_pocket')
 
   // Persist per-side canvas JSON so switching sides restores state
   const sideJsonRef = useRef<{ front: string; back: string }>({ front: '{}', back: '{}' })
-
-  // Called by Fabric canvas on every object:modified/added/removed
   const sideDataUrlRef = useRef<{ front: string; back: string }>({ front: '', back: '' })
 
   const broadcastDesignChange = useCallback(
@@ -152,10 +146,8 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
 
   const fabricHandle = useFabricCanvas(handleCanvasModified)
 
-  // When switching sides: save current JSON, load the other side's JSON
   const handleSideToggle = async (side: 'front' | 'back') => {
     if (side === activeSide) return
-    // Save current side
     sideJsonRef.current[activeSide] = fabricHandle.exportJson()
     setActiveSide(side)
     const targetJson = sideJsonRef.current[side]
@@ -166,7 +158,6 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     }
   }
 
-  // Sync text color into canvas when it changes
   useEffect(() => {
     if (fabricHandle.isReady && customText) {
       fabricHandle.updateTextColor(textColor)
@@ -180,7 +171,6 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     setUploadError(null)
     setIsUploading(true)
 
-    // Local blob URL for instant canvas preview while upload is in flight
     const localUrl = URL.createObjectURL(file)
     setArtworkUrl(localUrl)
     setArtworkName(file.name)
@@ -201,12 +191,10 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
       const json = await res.json()
       const serverUrl: string = json?.doc?.url || localUrl
       setArtworkUrl(serverUrl)
-      // Replace canvas image with server URL so fabricJson references a stable URL
       await fabricHandle.addImage(serverUrl)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error uploading file'
       setUploadError(msg)
-      // Keep local blob URL in canvas — still usable for preview
     } finally {
       setIsUploading(false)
     }
@@ -227,8 +215,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     if (text.trim()) {
       fabricHandle.addText(text.trim(), textColor)
     } else {
-      // Remove all text layers when field is cleared
-      fabricHandle.addText('', textColor) // addText guards on empty string
+      fabricHandle.addText('', textColor)
     }
   }
 
@@ -243,10 +230,16 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
 
   return (
     <div className={classes.customizerWrapper}>
+      {/* Studio Bar */}
       <div className={classes.header}>
-        <h5>
-          <span>🎨</span> Live POD Mockup Customizer
-        </h5>
+        <div className={classes.headerTitleBox}>
+          <span className={classes.studioDot} />
+          <h5 className={classes.studioTitle}>
+            PET Transfer Studio
+            <span className={classes.studioSubtitle}>/ Precision Mode</span>
+          </h5>
+        </div>
+
         <div className={classes.headerActions}>
           <div className={classes.sideToggleGroup}>
             <button
@@ -268,12 +261,12 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
               Back Side
             </button>
           </div>
-          <span className={classes.badge}>Custom Print</span>
         </div>
       </div>
 
+      {/* 60/40 Precision Workspace */}
       <div className={classes.stageContainer}>
-        {/* Mockup + Fabric canvas overlay */}
+        {/* Left Column: Canvas Preview */}
         <div className={classes.previewStage}>
           {fallbackImage ? (
             <img src={fallbackImage} alt={product.title} className={classes.mockupBase} />
@@ -283,7 +276,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
             </div>
           )}
 
-          {/* Safe zone indicator (static SVG) */}
+          {/* Safe zone boundary */}
           <svg
             className={classes.safeZoneOverlay}
             viewBox="0 0 100 100"
@@ -296,126 +289,159 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
               width="44"
               height="52"
               fill="none"
-              stroke="rgba(108,76,241,0.4)"
+              stroke="rgba(0, 113, 227, 0.4)"
               strokeWidth="0.8"
               strokeDasharray="3 2"
               rx="1"
             />
           </svg>
 
-          {/* Fabric.js canvas — absolute, covers print zone */}
+          {/* Fabric Canvas Overlay */}
           <div className={classes.canvasWrapper}>
             <canvas ref={fabricHandle.canvasEl} />
             {!fabricHandle.isReady && (
               <div className={classes.canvasLoading}>
-                <span>Loading canvas…</span>
+                <span>Initializing precision canvas…</span>
               </div>
             )}
           </div>
-        </div>
 
-        {/* Controls panel */}
-        <div className={classes.controlsPanel}>
+          {/* Dock indicator */}
           {fabricHandle.isReady && (artworkUrl || customText) && (
-            <div className={classes.dragStatusNotice}>
-              <span>✋ Click objects on canvas to move, resize, rotate</span>
+            <div className={classes.canvasHintDock}>
+              <span>Drag / Scale on Canvas</span>
               <button
                 type="button"
                 onClick={fabricHandle.deleteSelected}
-                className={classes.resetPosBtn}
+                className={classes.deleteObjBtn}
               >
                 Delete Selected
               </button>
             </div>
           )}
+        </div>
 
-          <div className={classes.controlGroup}>
-            <label>1. Upload Artwork / Design (PNG/JPG)</label>
-            <div className={classes.uploadBtnRow}>
-              <label className={classes.uploadLabel}>
-                <span>📁</span>{' '}
-                {isUploading ? 'Uploading...' : artworkName ? 'Change Design' : 'Choose Image File'}
+        {/* Right Column: 3-Step Guided Inspector */}
+        <div className={classes.controlsPanel}>
+          {/* Step 1: Upload Graphics & DPI Meter */}
+          <div className={classes.stepSection}>
+            <div className={classes.stepHeaderRow}>
+              <span className={classes.stepLabel}>
+                <span className={classes.stepNum}>1</span>
+                Artwork & Fidelity
+              </span>
+            </div>
+
+            <div className={classes.uploadActionRow}>
+              <label className={classes.uploadTriggerBtn}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                {isUploading ? 'Auditing File...' : artworkName ? 'Replace Artwork' : 'Upload Design File'}
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/webp"
                   disabled={isUploading}
-                  className={classes.fileInput}
+                  className={classes.fileInputHidden}
                   onChange={handleFileUpload}
                 />
               </label>
+
               {artworkUrl && (
-                <button type="button" onClick={handleClearArtwork} className={classes.clearBtn}>
+                <button type="button" onClick={handleClearArtwork} className={classes.clearArtworkBtn}>
                   Remove
                 </button>
               )}
             </div>
+
             {uploadError && (
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-error-500, #e74c3c)' }}>
+              <span style={{ fontSize: '11px', color: '#ef4444' }}>
                 {uploadError}
               </span>
             )}
 
-            {/* Smart DPI Quality Badge for PET Transfer */}
+            {/* Smart DPI Micro-Meter */}
             {dpiAssessment && (
               <div
                 className={[
-                  classes.dpiBadgeContainer,
+                  classes.dpiMeterCard,
                   classes[`dpi_${dpiAssessment.quality}`],
                 ]
                   .filter(Boolean)
                   .join(' ')}
               >
-                <div className={classes.dpiHeader}>
-                  <span className={classes.dpiIcon}>
+                <div className={classes.dpiMetaRow}>
+                  <span className={classes.dpiTitleText}>
                     {dpiAssessment.quality === 'good'
-                      ? '✨'
+                      ? 'Studio High Quality'
                       : dpiAssessment.quality === 'warning'
-                      ? '⚠️'
-                      : '🛑'}
+                      ? 'Acceptable Print DPI'
+                      : 'Low Resolution Warning'}
                   </span>
-                  <strong className={classes.dpiTitle}>{dpiAssessment.message}</strong>
-                  <span className={classes.dpiValue}>({dpiAssessment.dpi} DPI)</span>
+                  <span className={classes.dpiBadgeScore}>{dpiAssessment.dpi} DPI</span>
                 </div>
-                <p className={classes.dpiRecommendation}>{dpiAssessment.recommendation}</p>
+
+                <div className={classes.dpiBarTrack}>
+                  <div
+                    className={classes.dpiBarFill}
+                    style={{
+                      width: `${Math.min(100, Math.round((dpiAssessment.dpi / 300) * 100))}%`,
+                    }}
+                  />
+                </div>
+
+                <p className={classes.dpiGuidance}>{dpiAssessment.recommendation}</p>
               </div>
             )}
           </div>
 
-          <div className={classes.controlGroup}>
-            <label>2. Add Custom Text (Optional)</label>
+          {/* Step 2: Custom Typography */}
+          <div className={classes.stepSection}>
+            <div className={classes.stepHeaderRow}>
+              <span className={classes.stepLabel}>
+                <span className={classes.stepNum}>2</span>
+                Bespoke Typography (Optional)
+              </span>
+            </div>
+
             <input
               type="text"
-              placeholder="e.g. Your Name, Slogan..."
+              placeholder="e.g. BRAND NAME, MOTTO..."
               value={customText}
-              className={classes.textInput}
+              className={classes.textInputField}
               maxLength={40}
               onChange={e => handleTextChange(e.target.value)}
             />
-          </div>
 
-          {customText && (
-            <div className={classes.controlGroup}>
-              <label>Text Color</label>
-              <div className={classes.colorPickerRow}>
+            {customText && (
+              <div className={classes.colorPickerPalette}>
                 {TEXT_COLORS.map(c => (
                   <button
                     key={c}
                     type="button"
-                    className={[classes.textColorDot, textColor === c && classes.activeColor]
+                    className={[classes.colorChoiceDot, textColor === c && classes.activeColor]
                       .filter(Boolean)
                       .join(' ')}
-                    style={{ backgroundColor: c }}
+                    style={{ backgroundColor: c, border: c === '#FFFFFF' ? '1px solid rgba(0,0,0,0.2)' : undefined }}
                     onClick={() => handleColorChange(c)}
                     aria-label={`Select color ${c}`}
                   />
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* 3. PET Print Size Selector */}
-          <div className={classes.controlGroup}>
-            <label>3. Chọn Khổ In Màng PET Nhiệt</label>
+          {/* Step 3: PET Print Size Zone */}
+          <div className={classes.stepSection}>
+            <div className={classes.stepHeaderRow}>
+              <span className={classes.stepLabel}>
+                <span className={classes.stepNum}>3</span>
+                Direct-to-Film Print Format
+              </span>
+            </div>
+
             <div className={classes.printSizeGrid}>
               {(Object.keys(PET_PRINT_SIZE_SURCHARGES) as PetPrintSize[]).map(sizeKey => {
                 const conf = PET_PRINT_SIZE_SURCHARGES[sizeKey]
@@ -424,7 +450,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                   <button
                     key={sizeKey}
                     type="button"
-                    className={[classes.printSizeBtn, isSelected && classes.activePrintSize]
+                    className={[classes.printSizeTile, isSelected && classes.activePrintSize]
                       .filter(Boolean)
                       .join(' ')}
                     onClick={() => {
@@ -432,13 +458,14 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                       broadcastDesignChange(sizeKey)
                     }}
                   >
-                    <div className={classes.printSizeHeader}>
-                      <strong>{conf.label}</strong>
-                      <span className={classes.printSizePrice}>
-                        {conf.surchargeCents === 0 ? 'Mặc định' : `+${(conf.surchargeCents / 100).toFixed(2)}$`}
-                      </span>
+                    <div className={classes.sizeInfoCol}>
+                      <span className={classes.sizeTitle}>{conf.label}</span>
+                      <span className={classes.sizeDimensions}>{conf.desc}</span>
                     </div>
-                    <span className={classes.printSizeDesc}>{conf.desc}</span>
+
+                    <span className={classes.sizePriceTag}>
+                      {conf.surchargeCents === 0 ? 'Standard' : `+$${(conf.surchargeCents / 100).toFixed(2)}`}
+                    </span>
                   </button>
                 )
               })}
