@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-deps-stage-build
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Audit and verify Dockerfile stages for building node-canvas on Alpine Linux."
+    timeout: 5m
+    expected_output: "Docker multi-stage verification report."
+
+  - id: job-2-runtime-validation
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Synthesize operational validation status and production deployment checklist."
+    timeout: 5m
+    expected_output: "Runtime validation and ops readiness report."
