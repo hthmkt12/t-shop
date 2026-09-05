@@ -18,7 +18,7 @@ async function runTrackOrderTests(): Promise<void> {
     },
   }
 
-  await trackOrder({ query: {}, payload: { logger: { error: () => {} } } } as any, resMock1)
+  await (trackOrder as any)({ query: {}, payload: { logger: { error: () => {} } } } as any, resMock1)
   assert.strictEqual(statusResult, 400)
   assert.strictEqual(jsonResult?.error, 'Both orderId and email parameters are required')
   console.log('  ✅ Pass: rejected missing orderId/email with 400')
@@ -34,7 +34,7 @@ async function runTrackOrderTests(): Promise<void> {
     },
   }
 
-  await trackOrder(
+  await (trackOrder as any)(
     {
       query: { orderId: 'non_existent_id', email: 'test@example.com' },
       payload: {
@@ -59,7 +59,7 @@ async function runTrackOrderTests(): Promise<void> {
     },
   }
 
-  await trackOrder(
+  await (trackOrder as any)(
     {
       query: { orderId: 'valid_order_1', email: 'wrong@example.com' },
       payload: {
@@ -89,7 +89,7 @@ async function runTrackOrderTests(): Promise<void> {
     },
   }
 
-  await trackOrder(
+  await (trackOrder as any)(
     {
       query: { orderId: 'valid_order_1', email: 'correct@example.com' },
       payload: {

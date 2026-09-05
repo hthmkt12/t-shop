@@ -155,7 +155,7 @@ async function runE2ESmokeTest(): Promise<void> {
       }
     },
   }
-  await trackOrder(
+  await (trackOrder as any)(
     {
       query: { orderId: createdOrder.id, email: 'hacker@example.com' },
       payload: mockPayload,
@@ -178,7 +178,7 @@ async function runE2ESmokeTest(): Promise<void> {
       }
     },
   }
-  await trackOrder(
+  await (trackOrder as any)(
     {
       query: { orderId: createdOrder.id, email: 'customer@example.com' },
       payload: mockPayload,
