@@ -8,6 +8,7 @@ import { Gutter } from '../../_components/Gutter'
 import { Media } from '../../_components/Media'
 import { CustomDesignData, PodCustomizer } from '../../_components/PodCustomizer'
 import { Price, priceFromJSON } from '../../_components/Price'
+import { FAQAccordion } from '../../_components/FAQAccordion'
 import { useAnalytics } from '../../_providers/Analytics'
 
 import classes from './index.module.scss'
@@ -144,6 +145,16 @@ export const ProductHero: React.FC<{
           appearance={isAvailable ? 'primary' : 'secondary'}
           disabled={!isAvailable}
         />
+
+        <div className={classes.guaranteeBadge}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <span>Cam kết 100% hài lòng — Bảo hành chất lượng hình in &amp; đổi trả miễn phí</span>
+        </div>
+
+        <FAQAccordion />
       </div>
     </Gutter>
   )

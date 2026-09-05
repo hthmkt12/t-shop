@@ -1,3 +1,9 @@
+// Preload sharp before any other module loads native DLLs on Windows
+// Sharp docs note: "Using the canvas package on Windows? Ensure sharp is required before canvas"
+try {
+  require('sharp')
+} catch {}
+
 import dotenv from 'dotenv'
 import next from 'next'
 import nextBuild from 'next/dist/build'

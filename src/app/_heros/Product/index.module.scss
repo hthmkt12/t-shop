@@ -146,3 +146,24 @@
   border-top: 1px solid var(--pod-border);
   margin-top: 8px;
 }
+
+.guaranteeBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-top: 16px;
+  background-color: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+
+  svg {
+    flex-shrink: 0;
+    color: #10b981;
+  }
+}
+

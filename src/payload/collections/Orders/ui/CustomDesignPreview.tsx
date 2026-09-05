@@ -7,8 +7,15 @@ export const CustomDesignPreview: React.FC<UIField> = () => {
     useFormFields(([fields]) => fields['items.customDesignUrl'] || fields['customDesignUrl']) || {}
   const { value: customText } =
     useFormFields(([fields]) => fields['items.customText'] || fields['customText']) || {}
+  const { value: fabricJsonFront } =
+    useFormFields(([fields]) => fields['items.fabricJsonFront'] || fields['fabricJsonFront']) || {}
+  const { value: fabricJsonBack } =
+    useFormFields(([fields]) => fields['items.fabricJsonBack'] || fields['fabricJsonBack']) || {}
 
-  if (!customDesignUrl && !customText) return null
+  const hasFrontJson = Boolean(fabricJsonFront && fabricJsonFront !== '{}' && fabricJsonFront !== '{"objects":[]}')
+  const hasBackJson = Boolean(fabricJsonBack && fabricJsonBack !== '{}' && fabricJsonBack !== '{"objects":[]}')
+
+  if (!customDesignUrl && !customText && !hasFrontJson && !hasBackJson) return null
 
   return (
     <div
@@ -56,9 +63,57 @@ export const CustomDesignPreview: React.FC<UIField> = () => {
         </div>
       )}
       {Boolean(customText) && (
-        <div style={{ fontSize: '13px', color: '#f3f4f6' }}>
+        <div style={{ fontSize: '13px', color: '#f3f4f6', marginBottom: '6px' }}>
           <strong>Custom Text:</strong> &ldquo;{String(customText)}&rdquo;
         </div>
+      )}
+      {hasFrontJson && (
+        <details style={{ marginTop: '8px', fontSize: '12px', color: '#9ca3af' }}>
+          <summary style={{ cursor: 'pointer', color: '#c4b5fd', fontWeight: 500 }}>
+            🔍 View Fabric JSON (Front Design)
+          </summary>
+          <pre
+            style={{
+              marginTop: '4px',
+              padding: '8px',
+              backgroundColor: '#0d0c11',
+              borderRadius: '4px',
+              overflowX: 'auto',
+              maxHeight: '140px',
+              fontSize: '11px',
+              fontFamily: 'monospace',
+              color: '#e5e7eb',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+            }}
+          >
+            {String(fabricJsonFront)}
+          </pre>
+        </details>
+      )}
+      {hasBackJson && (
+        <details style={{ marginTop: '6px', fontSize: '12px', color: '#9ca3af' }}>
+          <summary style={{ cursor: 'pointer', color: '#c4b5fd', fontWeight: 500 }}>
+            🔍 View Fabric JSON (Back Design)
+          </summary>
+          <pre
+            style={{
+              marginTop: '4px',
+              padding: '8px',
+              backgroundColor: '#0d0c11',
+              borderRadius: '4px',
+              overflowX: 'auto',
+              maxHeight: '140px',
+              fontSize: '11px',
+              fontFamily: 'monospace',
+              color: '#e5e7eb',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+            }}
+          >
+            {String(fabricJsonBack)}
+          </pre>
+        </details>
       )}
     </div>
   )

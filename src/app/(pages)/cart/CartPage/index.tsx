@@ -112,6 +112,32 @@ export const CartPage: React.FC<{
                   <h6 className={classes.cartTotal}>Summary</h6>
                 </div>
 
+                {/* Free Shipping Progress Indicator */}
+                {(() => {
+                  const FREE_SHIPPING_THRESHOLD = 5000 // $50.00
+                  const currentTotalCents = (cartTotal.raw || 0) * 100
+                  const diffCents = FREE_SHIPPING_THRESHOLD - currentTotalCents
+                  const isFree = diffCents <= 0
+                  const progressPct = Math.min(100, Math.max(0, (currentTotalCents / FREE_SHIPPING_THRESHOLD) * 100))
+
+                  return (
+                    <div className={classes.shippingBanner}>
+                      <div className={classes.shippingText}>
+                        {isFree ? (
+                          <span className={classes.shippingSuccess}>🎉 Chúc mừng! Đơn hàng được Miễn phí vận chuyển</span>
+                        ) : (
+                          <span>
+                            Thêm <strong>${(diffCents / 100).toFixed(2)}</strong> để được <strong>Miễn phí vận chuyển</strong>
+                          </span>
+                        )}
+                      </div>
+                      <div className={classes.progressBarBg}>
+                        <div className={classes.progressBarFill} style={{ width: `${progressPct}%` }} />
+                      </div>
+                    </div>
+                  )
+                })()}
+
                 <div className={classes.row}>
                   <p className={classes.cartTotal}>Delivery Charge</p>
                   <p className={classes.cartTotal}>$0</p>
