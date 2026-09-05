@@ -12,6 +12,8 @@ services:
       - ./media:/app/media
     depends_on:
       - mongo
+    environment:
+      - DATABASE_URI=mongodb://mongo:27017/payload-template-ecommerce
     env_file:
       - .env
 

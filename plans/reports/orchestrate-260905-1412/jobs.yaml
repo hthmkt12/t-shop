@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-compose-env-audit
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Audit docker-compose.yml environment variables, specifically mongo network host resolution."
+    timeout: 5m
+    expected_output: "Docker compose networking and env configuration report."
+
+  - id: job-2-production-checklist
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Review container network mapping and print workshop coordination next steps."
+    timeout: 5m
+    expected_output: "Operational synthesis report."
