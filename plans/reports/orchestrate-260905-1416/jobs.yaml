@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-compose-test-run
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Execute dry-run / container build check for docker compose stack."
+    timeout: 5m
+    expected_output: "Container build test summary."
+
+  - id: job-2-final-readiness-evaluation
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Evaluate end-to-end readiness across all layers: DB, Node backend, client customizer, rendering, export."
+    timeout: 5m
+    expected_output: "System readiness synthesis report."
