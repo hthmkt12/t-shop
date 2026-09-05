@@ -1,7 +1,8 @@
 'use client'
 
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { Page, Settings } from '../../../../payload/payload-types'
 import { Button } from '../../../_components/Button'
@@ -10,6 +11,8 @@ import { LoadingShimmer } from '../../../_components/LoadingShimmer'
 import { Media } from '../../../_components/Media'
 import { Price } from '../../../_components/Price'
 import { RemoveFromCartButton } from '../../../_components/RemoveFromCartButton'
+import { DeliveryEstimator } from '../../../_components/DeliveryEstimator'
+import { DigitalProofModal, ProofItem } from '../../../_components/DigitalProofModal'
 import { useAuth } from '../../../_providers/Auth'
 import { useCart } from '../../../_providers/Cart'
 import CartItem from '../CartItem'
@@ -24,8 +27,33 @@ export const CartPage: React.FC<{
   const { productsPage } = settings || {}
 
   const { user } = useAuth()
+  const router = useRouter()
+  const [isProofModalOpen, setIsProofModalOpen] = useState(false)
 
   const { cart, cartIsEmpty, addItemToCart, cartTotal, hasInitializedCart } = useCart()
+
+  const proofItems: ProofItem[] = (cart?.items || [])
+    .filter(item => typeof item.product === 'object')
+    .map(item => ({
+      title: (item.product as any)?.title || 'Product',
+      variantTitle: (item as any)?.variantTitle,
+      artworkUrl: (item as any)?.customDesignUrl,
+      customText: (item as any)?.customText,
+      petPrintSize: (item as any)?.petPrintSize,
+      quantity: item.quantity || 1,
+    }))
+
+  const hasCustomArtwork = proofItems.some(
+    i => Boolean(i.artworkUrl) || Boolean(i.customText) || Boolean(i.petPrintSize),
+  )
+
+  const handleCheckoutClick = () => {
+    if (hasCustomArtwork) {
+      setIsProofModalOpen(true)
+    } else {
+      router.push(user ? '/checkout' : '/login?redirect=%2Fcheckout')
+    }
+  }
 
   return (
     <Fragment>
@@ -98,6 +126,8 @@ export const CartPage: React.FC<{
                           variantTitle={(item as any)?.variantTitle}
                           customDesignUrl={(item as any)?.customDesignUrl}
                           customText={(item as any)?.customText}
+                          petPrintSize={(item as any)?.petPrintSize}
+                          petSurcharge={(item as any)?.petSurcharge}
                           addItemToCart={addItemToCart}
                         />
                       )
@@ -148,6 +178,8 @@ export const CartPage: React.FC<{
                   <p className={classes.cartTotal}>{cartTotal.formatted}</p>
                 </div>
 
+                <DeliveryEstimator showGuarantee={true} />
+
                 {/* POD Order Bump / Cross-sell Accent Box */}
                 <div className={classes.orderBumpCard}>
                   <div className={classes.bumpHeader}>
@@ -181,9 +213,18 @@ export const CartPage: React.FC<{
 
                 <Button
                   className={classes.checkoutButton}
-                  href={user ? '/checkout' : '/login?redirect=%2Fcheckout'}
+                  onClick={handleCheckoutClick}
                   label={user ? 'Checkout' : 'Login to checkout'}
                   appearance="primary"
+                />
+
+                <DigitalProofModal
+                  isOpen={isProofModalOpen}
+                  onClose={() => setIsProofModalOpen(false)}
+                  onConfirm={() => {
+                    router.push(user ? '/checkout' : '/login?redirect=%2Fcheckout')
+                  }}
+                  items={proofItems}
                 />
               </div>
             </div>

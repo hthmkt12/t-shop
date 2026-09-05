@@ -1,22 +1,22 @@
 export const inclusions = [
   {
-    title: 'Free Shipping',
-    description: 'Free shipping for order above $150',
+    title: 'Precision PET Printing',
+    description: 'Ultra-durable Direct-to-Film transfers',
     icon: '/assets/icons/shipping.svg',
   },
   {
-    title: 'Money Guarantee',
-    description: 'Within 30 days for an exchange',
+    title: 'Washability Guarantee',
+    description: '50+ wash cycles without cracking or peeling',
     icon: '/assets/icons/dollar.svg',
   },
   {
-    title: 'Online Support',
-    description: '24 hours a day, 7 days a week',
+    title: 'Smart DPI Verification',
+    description: 'Real-time high-resolution artwork audit',
     icon: '/assets/icons/support.svg',
   },
   {
-    title: 'Flexible Payment',
-    description: 'Pay with multiple credit cards',
+    title: 'Rapid 24h Dispatch',
+    description: 'Produced and fulfilled on demand',
     icon: '/assets/icons/payment.svg',
   },
 ]

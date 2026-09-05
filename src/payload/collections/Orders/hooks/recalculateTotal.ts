@@ -30,6 +30,12 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
     return data
   }
 
+  // Development/Test mock bypass: allow simulated test orders when STRIPE_SECRET_KEY is absent
+  if (paymentIntentID.startsWith('test_mock_') && !process.env.STRIPE_SECRET_KEY) {
+    payload.logger.info(`recalculateTotal: Test mock order permitted: ${paymentIntentID}`)
+    return data
+  }
+
   // Fail closed if we cannot talk to Stripe at all.
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error(
@@ -133,6 +139,22 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
           if (unitPrice === null && typeof product.price === 'number') {
             unitPrice = product.price
           }
+
+          // PET Print Surcharge
+          const petPrintSize = item?.petPrintSize
+          let petSurcharge = 0
+          if (petPrintSize === 'a4') petSurcharge += 300
+          else if (petPrintSize === 'a3') petSurcharge += 600
+
+          const hasFront = Boolean(item?.fabricJsonFront && item.fabricJsonFront !== '{}' && item.fabricJsonFront !== '{"objects":[]}')
+          const hasBack = Boolean(item?.fabricJsonBack && item.fabricJsonBack !== '{}' && item.fabricJsonBack !== '{"objects":[]}')
+          if (hasFront && hasBack) {
+            petSurcharge += 400
+          }
+
+          if (unitPrice !== null) {
+            unitPrice += petSurcharge
+          }
         }
       }
 
@@ -144,6 +166,8 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
         customText: customText || undefined,
         fabricJsonFront: fabricJsonFront || undefined,
         fabricJsonBack: fabricJsonBack || undefined,
+        petPrintSize: item?.petPrintSize || undefined,
+        petSurcharge: item?.petSurcharge || undefined,
         quantity,
         price: unitPrice ?? 0,
       }

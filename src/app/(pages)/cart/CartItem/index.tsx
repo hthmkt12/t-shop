@@ -20,6 +20,8 @@ const CartItem = ({
   variantTitle,
   customDesignUrl,
   customText,
+  petPrintSize,
+  petSurcharge,
 }) => {
   const [quantity, setQuantity] = useState(qty)
 
@@ -27,6 +29,10 @@ const CartItem = ({
     ? (product as any)?.variants?.find((v: any) => v.sku === sku)
     : null
   const maxStock = variantObj ? variantObj.stock ?? 0 : (product as any)?.stock ?? 999
+
+  const basePriceCents = variantObj?.price ?? (product as any)?.price ?? 0
+  const surchargeCents = typeof petSurcharge === 'number' ? petSurcharge : 0
+  const itemUnitPriceCents = basePriceCents > 0 ? basePriceCents + surchargeCents : undefined
 
   const decrementQty = () => {
     const updatedQty = quantity > 1 ? quantity - 1 : 1
@@ -39,6 +45,8 @@ const CartItem = ({
       variantTitle,
       customDesignUrl,
       customText,
+      petPrintSize,
+      petSurcharge,
     })
   }
 
@@ -54,6 +62,8 @@ const CartItem = ({
       variantTitle,
       customDesignUrl,
       customText,
+      petPrintSize,
+      petSurcharge,
     })
   }
 
@@ -70,6 +80,8 @@ const CartItem = ({
       variantTitle,
       customDesignUrl,
       customText,
+      petPrintSize,
+      petSurcharge,
     })
   }
 
@@ -132,7 +144,12 @@ const CartItem = ({
               {maxStock > 0 ? `Only ${maxStock} left in stock` : 'Out of stock'}
             </p>
           )}
-          <Price product={product} button={false} />
+          {petPrintSize && (
+            <p style={{ fontSize: '12px', color: 'var(--theme-brand)', fontWeight: 600, marginTop: '2px' }}>
+              Khổ in: {petPrintSize === 'a3' ? 'Khổ A3 (+6.00$)' : petPrintSize === 'a4' ? 'Khổ A4 (+3.00$)' : 'Logo Ngực'}
+            </p>
+          )}
+          <Price product={product} button={false} priceOverride={itemUnitPriceCents} />
         </div>
 
         <div className={classes.quantity}>

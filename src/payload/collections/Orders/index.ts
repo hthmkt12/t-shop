@@ -166,6 +166,25 @@ export const Orders: CollectionConfig = {
           },
         },
         {
+          name: 'petPrintSize',
+          label: 'Khổ in màng PET',
+          type: 'select',
+          options: [
+            { label: 'Logo Ngực (10x10cm)', value: 'chest_pocket' },
+            { label: 'Khổ A4 (21x30cm)', value: 'a4' },
+            { label: 'Khổ A3 (30x42cm)', value: 'a3' },
+          ],
+          admin: {
+            description: 'Khổ in PET phục vụ xưởng cắt film nhiệt',
+          },
+        },
+        {
+          name: 'petSurcharge',
+          label: 'Phụ phí in PET (cents)',
+          type: 'number',
+          min: 0,
+        },
+        {
           name: 'price',
           type: 'number',
           min: 0,

@@ -6,6 +6,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 type FabricModule = typeof import('fabric')
 type FabricCanvas = import('fabric').Canvas
 
+export type ImageMetrics = {
+  originalWidth: number
+  originalHeight: number
+  scaledWidth: number
+  scaledHeight: number
+}
+
 export type FabricCanvasHandle = {
   canvasEl: React.RefObject<HTMLCanvasElement>
   isReady: boolean
@@ -17,10 +24,11 @@ export type FabricCanvasHandle = {
   exportJson: () => string
   exportDataUrl: () => string
   loadJson: (json: string) => Promise<void>
+  getActiveImageMetrics: () => ImageMetrics | null
 }
 
 export function useFabricCanvas(
-  onModified: (json: string, dataUrl: string) => void,
+  onModified: (json: string, dataUrl: string, imageMetrics?: ImageMetrics | null) => void,
 ): FabricCanvasHandle {
   const canvasEl = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<FabricCanvas | null>(null)
@@ -48,16 +56,31 @@ export function useFabricCanvas(
 
       fabricRef.current = canvas
 
+      const getImageMetrics = (): ImageMetrics | null => {
+        if (!fabricRef.current) return null
+        const objects = fabricRef.current.getObjects()
+        const imgObj = objects.find(
+          obj => obj.type === 'image' || (obj as any)._element instanceof HTMLImageElement,
+        ) as any
+        if (!imgObj) return null
+        const originalWidth = imgObj.width || imgObj._element?.naturalWidth || 0
+        const originalHeight = imgObj.height || imgObj._element?.naturalHeight || 0
+        const scaledWidth = imgObj.getScaledWidth() || originalWidth
+        const scaledHeight = imgObj.getScaledHeight() || originalHeight
+        return { originalWidth, originalHeight, scaledWidth, scaledHeight }
+      }
+
       const notify = () => {
         if (!fabricRef.current) return
         const json = JSON.stringify(fabricRef.current.toJSON())
         const dataUrl = fabricRef.current.toDataURL({ format: 'png', multiplier: 1 })
-        onModified(json, dataUrl)
+        onModified(json, dataUrl, getImageMetrics())
       }
 
       canvas.on('object:modified', notify)
       canvas.on('object:added', notify)
       canvas.on('object:removed', notify)
+      canvas.on('object:scaling', notify)
 
       // Delete selected object on keyboard Delete/Backspace
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -185,6 +208,21 @@ export function useFabricCanvas(
     }
   }, [])
 
+  const getActiveImageMetrics = useCallback((): ImageMetrics | null => {
+    const canvas = fabricRef.current
+    if (!canvas) return null
+    const objects = canvas.getObjects()
+    const imgObj = objects.find(
+      obj => obj.type === 'image' || (obj as any)._element instanceof HTMLImageElement,
+    ) as any
+    if (!imgObj) return null
+    const originalWidth = imgObj.width || imgObj._element?.naturalWidth || 0
+    const originalHeight = imgObj.height || imgObj._element?.naturalHeight || 0
+    const scaledWidth = imgObj.getScaledWidth() || originalWidth
+    const scaledHeight = imgObj.getScaledHeight() || originalHeight
+    return { originalWidth, originalHeight, scaledWidth, scaledHeight }
+  }, [])
+
   return {
     canvasEl,
     isReady,
@@ -196,5 +234,6 @@ export function useFabricCanvas(
     exportJson,
     exportDataUrl,
     loadJson,
+    getActiveImageMetrics,
   }
 }
