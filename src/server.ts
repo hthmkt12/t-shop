@@ -1,5 +1,7 @@
-// Preload sharp before any other module loads native DLLs on Windows
-// Sharp docs note: "Using the canvas package on Windows? Ensure sharp is required before canvas"
+// Preload canvas before sharp on Windows to prevent DLL procedure entry collision (libglib / cairo)
+try {
+  require('canvas')
+} catch {}
 try {
   require('sharp')
 } catch {}
