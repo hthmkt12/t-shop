@@ -1,7 +1,7 @@
 ---
 title: "POD Customizer Upgrade — Fabric.js Canvas"
 description: "Upgrade existing CSS-based PodCustomizer to Fabric.js canvas with design persistence, server-side preview, and admin fulfillment view"
-status: pending
+status: completed
 priority: P1
 effort: "10-14 days"
 tags: [pod, customizer, fabric, canvas, b2c]
@@ -30,12 +30,12 @@ t-shop đã có PodCustomizer (CSS-based: upload ảnh, drag, text, scale/rotati
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | [Phase 1: Audit & Setup](./phase-01-start.md) | Pending |
-| 2 | [Phase 2: Fabric.js Canvas Core](./phase-02-fabric-canvas-core.md) | Pending |
-| 3 | [Phase 3: Design Persistence](./phase-03-design-persistence.md) | Pending |
-| 4 | [Phase 4: Server Preview (sharp)](./phase-04-server-preview.md) | Pending |
-| 5 | [Phase 5: Admin Fulfillment View](./phase-05-admin-fulfillment.md) | Pending |
-| 6 | [Phase 6: Quick Wins UX](./phase-06-quick-wins.md) | Pending |
+| 1 | [Phase 1: Audit & Setup](./phase-01-start.md) | Completed |
+| 2 | [Phase 2: Fabric.js Canvas Core](./phase-02-fabric-canvas-core.md) | Completed |
+| 3 | [Phase 3: Design Persistence](./phase-03-design-persistence.md) | Completed |
+| 4 | [Phase 4: Server Preview (sharp)](./phase-04-server-preview.md) | Completed |
+| 5 | [Phase 5: Admin Fulfillment View](./phase-05-admin-fulfillment.md) | Completed |
+| 6 | [Phase 6: Quick Wins UX](./phase-06-quick-wins.md) | Completed |
 
 ## Success Criteria
 

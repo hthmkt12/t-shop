@@ -1,0 +1,15 @@
+{
+  "id": "job-1-docker-validation",
+  "runtime": "internal",
+  "model": "fable",
+  "agent": "fullstack-developer",
+  "task": "test",
+  "capabilityTier": "C2",
+  "riskTier": "R0",
+  "status": "success",
+  "exitCode": 0,
+  "durationMs": 1200,
+  "timedOut": false,
+  "attempts": 1,
+  "worktree": null
+}

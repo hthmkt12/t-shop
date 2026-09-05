@@ -1,0 +1,26 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-validation
+    runtime: internal
+    task: test
+    cwd: F:/t-shop
+    prompt: "Verify Dockerfile Linux production compatibility for node-canvas and sharp dependencies, check build configuration and headless requirements."
+    timeout: 5m
+    expected_output: "Evaluation report on Dockerfile libcairo/libpango readiness and test status."
+
+  - id: job-2-mobile-touch-audit
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Audit PodCustomizer and fabric canvas touch/gesture responsiveness on mobile viewports (<= 400px), identify CSS/event bottlenecks."
+    timeout: 5m
+    expected_output: "Audit findings with mobile UX fixes and accessibility recommendations."
+
+  - id: job-3-plan-status-reconciliation
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Reconcile plans/260905-0442-pod-customizer-upgrade/ phase files with current repository implementation state."
+    timeout: 5m
+    expected_output: "Updated phase completion status across all 6 phases with accurate diff references."
