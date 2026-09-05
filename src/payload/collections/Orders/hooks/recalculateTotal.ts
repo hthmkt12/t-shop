@@ -30,6 +30,12 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
     return data
   }
 
+  // Development/Test mock bypass: allow simulated test orders when STRIPE_SECRET_KEY is absent
+  if (paymentIntentID.startsWith('test_mock_') && !process.env.STRIPE_SECRET_KEY) {
+    payload.logger.info(`recalculateTotal: Test mock order permitted: ${paymentIntentID}`)
+    return data
+  }
+
   // Fail closed if we cannot talk to Stripe at all.
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error(
