@@ -187,6 +187,10 @@ export const CheckoutPage: React.FC<{
                       index={index}
                       sku={(item as any)?.sku}
                       variantTitle={(item as any)?.variantTitle}
+                      customDesignUrl={(item as any)?.customDesignUrl}
+                      customText={(item as any)?.customText}
+                      petPrintSize={(item as any)?.petPrintSize}
+                      petSurcharge={(item as any)?.petSurcharge}
                     />
                   </Fragment>
                 )

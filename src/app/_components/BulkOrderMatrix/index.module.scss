@@ -1,0 +1,135 @@
+.matrixContainer {
+  margin-top: 16px;
+  border: 1px solid var(--theme-border-subtle, #e5e7eb);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--theme-elevation-0, #ffffff);
+}
+
+.modeToggle {
+  display: flex;
+  background-color: var(--theme-surface-subtle, #f3f4f6);
+  border-bottom: 1px solid var(--theme-border-subtle, #e5e7eb);
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--theme-text-soft, #6b7280);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.active {
+    background-color: var(--theme-elevation-0, #ffffff);
+    color: var(--theme-brand, #6c4cf1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.matrixTableWrapper {
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.matrixTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 8px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--theme-border-subtle, #f3f4f6);
+  }
+
+  th {
+    background-color: var(--theme-surface-subtle, #f9fafb);
+    font-weight: 600;
+    color: var(--theme-text-primary, #374151);
+  }
+
+  .variantCell {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    display: inline-block;
+  }
+}
+
+.qtyInput {
+  width: 54px;
+  padding: 6px;
+  text-align: center;
+  border: 1px solid var(--theme-border-subtle, #d1d5db);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+
+  &:focus {
+    outline: none;
+    border-color: var(--theme-brand, #6c4cf1);
+  }
+
+  &:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--theme-surface-subtle, #f9fafb);
+  border-top: 1px solid var(--theme-border-subtle, #e5e7eb);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tierDiscountBadge {
+  font-size: 12px;
+  color: #15803d;
+  background-color: #dcfce7;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.bulkAddBtn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 16px;
+  background-color: var(--theme-brand, #6c4cf1);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+}

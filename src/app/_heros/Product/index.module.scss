@@ -167,3 +167,32 @@
   }
 }
 
+.orderModeTabs {
+  display: flex;
+  background-color: var(--theme-surface-subtle, #f3f4f6);
+  border: 1px solid var(--theme-border-subtle, #e5e7eb);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 12px;
+
+  button {
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-text-soft, #6b7280);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &.active {
+      background-color: var(--theme-elevation-0, #ffffff);
+      color: var(--theme-brand, #6c4cf1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+

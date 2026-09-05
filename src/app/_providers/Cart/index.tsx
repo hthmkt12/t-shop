@@ -57,6 +57,8 @@ const flattenCart = (cart: User['cart']): User['cart'] => ({
         customText: (item as any)?.customText || undefined,
         fabricJsonFront: (item as any)?.fabricJsonFront || undefined,
         fabricJsonBack: (item as any)?.fabricJsonBack || undefined,
+        petPrintSize: (item as any)?.petPrintSize || undefined,
+        petSurcharge: (item as any)?.petSurcharge || undefined,
       }
     })
     .filter(Boolean) as CartItem[],
@@ -112,6 +114,8 @@ export const CartProvider = props => {
                 customText,
                 fabricJsonFront,
                 fabricJsonBack,
+                petPrintSize,
+                petSurcharge,
               }) => {
                 const res = await fetch(
                   `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${product}`,
@@ -126,6 +130,8 @@ export const CartProvider = props => {
                   customText,
                   fabricJsonFront,
                   fabricJsonBack,
+                  petPrintSize,
+                  petSurcharge,
                 }
               },
             ),
@@ -296,7 +302,10 @@ export const CartProvider = props => {
           }
         }
 
-        return acc + itemPrice * qty
+        const petSurcharge = typeof (item as any)?.petSurcharge === 'number' ? (item as any).petSurcharge : 0
+        const itemFinalPrice = itemPrice + petSurcharge
+
+        return acc + itemFinalPrice * qty
       }, 0) || 0
 
     setTotal({

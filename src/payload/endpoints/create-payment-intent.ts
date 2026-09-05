@@ -156,7 +156,21 @@ export const createPaymentIntent: PayloadHandler = async (req, res): Promise<voi
           unitAmount = fullProduct.price
         }
 
-        total += (unitAmount || 0) * quantity
+        // Add verified PET Print Surcharge if present
+        const petPrintSize = item?.petPrintSize
+        let petSurcharge = 0
+        if (petPrintSize === 'a4') petSurcharge += 300
+        else if (petPrintSize === 'a3') petSurcharge += 600
+
+        const hasFront = Boolean(item?.fabricJsonFront && item.fabricJsonFront !== '{}' && item.fabricJsonFront !== '{"objects":[]}')
+        const hasBack = Boolean(item?.fabricJsonBack && item.fabricJsonBack !== '{}' && item.fabricJsonBack !== '{"objects":[]}')
+        if (hasFront && hasBack) {
+          petSurcharge += 400 // Second side surcharge
+        }
+
+        const finalUnitAmount = (unitAmount || 0) + petSurcharge
+
+        total += finalUnitAmount * quantity
 
         return null
       }),

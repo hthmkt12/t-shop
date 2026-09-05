@@ -4,8 +4,14 @@ import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 're
 
 import { Media, Product } from '../../../payload/payload-types'
 import { useAnalytics } from '../../_providers/Analytics'
+import { calculatePrintDpi, DpiAssessment } from './dpi-calculator'
 import classes from './index.module.scss'
-import { useFabricCanvas } from './use-fabric-canvas'
+import {
+  calculatePetSurcharge,
+  PET_PRINT_SIZE_SURCHARGES,
+  PetPrintSize,
+} from './pet-pricing'
+import { ImageMetrics, useFabricCanvas } from './use-fabric-canvas'
 
 export type CustomDesignData = {
   artworkUrl?: string
@@ -26,6 +32,9 @@ export type CustomDesignData = {
   fabricJsonBack?: string
   previewDataUrlFront?: string
   previewDataUrlBack?: string
+  // In PET pricing configurations
+  petPrintSize?: PetPrintSize
+  petSurcharge?: number
 }
 
 type Props = {
@@ -46,6 +55,8 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
   const [customText, setCustomText] = useState<string>('')
   const [textColor, setTextColor] = useState<string>('#131118')
   const [activeSide, setActiveSide] = useState<'front' | 'back'>('front')
+  const [dpiAssessment, setDpiAssessment] = useState<DpiAssessment | null>(null)
+  const [petPrintSize, setPetPrintSize] = useState<PetPrintSize>('chest_pocket')
 
   // Persist per-side canvas JSON so switching sides restores state
   const sideJsonRef = useRef<{ front: string; back: string }>({ front: '{}', back: '{}' })
@@ -53,18 +64,64 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
   // Called by Fabric canvas on every object:modified/added/removed
   const sideDataUrlRef = useRef<{ front: string; back: string }>({ front: '', back: '' })
 
+  const broadcastDesignChange = useCallback(
+    (currentPrintSize: PetPrintSize) => {
+      if (!onDesignChange) return
+      const frontJson = sideJsonRef.current.front
+      const backJson = sideJsonRef.current.back
+      const hasFront = frontJson !== '{}' && frontJson !== '{"objects":[]}'
+      const hasBack = backJson !== '{}' && backJson !== '{"objects":[]}'
+
+      if (!hasFront && !hasBack && !artworkUrl && !customText.trim()) {
+        onDesignChange(null)
+        return
+      }
+
+      const surcharge = calculatePetSurcharge(currentPrintSize, hasFront, hasBack)
+
+      onDesignChange({
+        artworkUrl: artworkUrl || undefined,
+        artworkName: artworkName || undefined,
+        scale: 100,
+        rotation: 0,
+        customText: customText.trim() || undefined,
+        textColor,
+        activeSide,
+        fabricJson: sideJsonRef.current[activeSide],
+        previewDataUrl: sideDataUrlRef.current[activeSide],
+        fabricJsonFront: frontJson,
+        fabricJsonBack: backJson,
+        previewDataUrlFront: sideDataUrlRef.current.front,
+        previewDataUrlBack: sideDataUrlRef.current.back,
+        petPrintSize: currentPrintSize,
+        petSurcharge: surcharge,
+      })
+    },
+    [activeSide, artworkUrl, artworkName, customText, textColor, onDesignChange],
+  )
+
   const handleCanvasModified = useCallback(
-    (json: string, dataUrl: string) => {
+    (json: string, dataUrl: string, imageMetrics?: ImageMetrics | null) => {
       sideJsonRef.current[activeSide] = json
       sideDataUrlRef.current[activeSide] = dataUrl
 
-      if (!onDesignChange) return
+      if (imageMetrics && imageMetrics.originalWidth > 0 && imageMetrics.scaledWidth > 0) {
+        const assessment = calculatePrintDpi(
+          imageMetrics.originalWidth,
+          imageMetrics.originalHeight,
+          imageMetrics.scaledWidth,
+        )
+        setDpiAssessment(assessment)
+      } else if (!artworkUrl) {
+        setDpiAssessment(null)
+      }
+
       const hasContent = json !== '{}' && json !== '{"objects":[]}'
       const otherSide = activeSide === 'front' ? 'back' : 'front'
       const otherHasContent =
         sideJsonRef.current[otherSide] !== '{}' && sideJsonRef.current[otherSide] !== '{"objects":[]}'
       if (!hasContent && !otherHasContent && !artworkUrl && !customText.trim()) {
-        onDesignChange(null)
+        if (onDesignChange) onDesignChange(null)
         return
       }
 
@@ -79,24 +136,18 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
         },
       })
 
-      onDesignChange({
-        artworkUrl: artworkUrl || undefined,
-        artworkName: artworkName || undefined,
-        // Legacy scalar fields — Fabric now owns actual geometry
-        scale: 100,
-        rotation: 0,
-        customText: customText.trim() || undefined,
-        textColor,
-        activeSide,
-        fabricJson: json,
-        previewDataUrl: dataUrl,
-        fabricJsonFront: sideJsonRef.current.front,
-        fabricJsonBack: sideJsonRef.current.back,
-        previewDataUrlFront: sideDataUrlRef.current.front,
-        previewDataUrlBack: sideDataUrlRef.current.back,
-      })
+      broadcastDesignChange(petPrintSize)
     },
-    [activeSide, artworkUrl, artworkName, customText, textColor, onDesignChange, product, trackEvent],
+    [
+      activeSide,
+      artworkUrl,
+      customText,
+      product,
+      trackEvent,
+      broadcastDesignChange,
+      petPrintSize,
+      onDesignChange,
+    ],
   )
 
   const fabricHandle = useFabricCanvas(handleCanvasModified)
@@ -165,6 +216,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     setArtworkUrl(null)
     setArtworkName('')
     setUploadError(null)
+    setDpiAssessment(null)
     fabricHandle.clearCanvas()
     if (onDesignChange) onDesignChange(null)
   }
@@ -302,6 +354,31 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
                 {uploadError}
               </span>
             )}
+
+            {/* Smart DPI Quality Badge for PET Transfer */}
+            {dpiAssessment && (
+              <div
+                className={[
+                  classes.dpiBadgeContainer,
+                  classes[`dpi_${dpiAssessment.quality}`],
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <div className={classes.dpiHeader}>
+                  <span className={classes.dpiIcon}>
+                    {dpiAssessment.quality === 'good'
+                      ? '✨'
+                      : dpiAssessment.quality === 'warning'
+                      ? '⚠️'
+                      : '🛑'}
+                  </span>
+                  <strong className={classes.dpiTitle}>{dpiAssessment.message}</strong>
+                  <span className={classes.dpiValue}>({dpiAssessment.dpi} DPI)</span>
+                </div>
+                <p className={classes.dpiRecommendation}>{dpiAssessment.recommendation}</p>
+              </div>
+            )}
           </div>
 
           <div className={classes.controlGroup}>
@@ -335,6 +412,38 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
               </div>
             </div>
           )}
+
+          {/* 3. PET Print Size Selector */}
+          <div className={classes.controlGroup}>
+            <label>3. Chọn Khổ In Màng PET Nhiệt</label>
+            <div className={classes.printSizeGrid}>
+              {(Object.keys(PET_PRINT_SIZE_SURCHARGES) as PetPrintSize[]).map(sizeKey => {
+                const conf = PET_PRINT_SIZE_SURCHARGES[sizeKey]
+                const isSelected = petPrintSize === sizeKey
+                return (
+                  <button
+                    key={sizeKey}
+                    type="button"
+                    className={[classes.printSizeBtn, isSelected && classes.activePrintSize]
+                      .filter(Boolean)
+                      .join(' ')}
+                    onClick={() => {
+                      setPetPrintSize(sizeKey)
+                      broadcastDesignChange(sizeKey)
+                    }}
+                  >
+                    <div className={classes.printSizeHeader}>
+                      <strong>{conf.label}</strong>
+                      <span className={classes.printSizePrice}>
+                        {conf.surchargeCents === 0 ? 'Mặc định' : `+${(conf.surchargeCents / 100).toFixed(2)}$`}
+                      </span>
+                    </div>
+                    <span className={classes.printSizeDesc}>{conf.desc}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -9,6 +9,8 @@ import { Media } from '../../_components/Media'
 import { CustomDesignData, PodCustomizer } from '../../_components/PodCustomizer'
 import { Price, priceFromJSON } from '../../_components/Price'
 import { FAQAccordion } from '../../_components/FAQAccordion'
+import { DeliveryEstimator } from '../../_components/DeliveryEstimator'
+import { BulkOrderMatrix } from '../../_components/BulkOrderMatrix'
 import { useAnalytics } from '../../_providers/Analytics'
 
 import classes from './index.module.scss'
@@ -23,31 +25,35 @@ export const ProductHero: React.FC<{
   const variants = (product as any)?.variants || []
   const [selectedVariantIndex, setSelectedVariantIndex] = useState<number>(0)
   const [customDesign, setCustomDesign] = useState<CustomDesignData | null>(null)
+  const [orderMode, setOrderMode] = useState<'single' | 'bulk'>('single')
 
   const currentVariant = hasVariants ? variants[selectedVariantIndex] : null
   const currentStock = hasVariants ? currentVariant?.stock ?? 0 : (product as any)?.stock ?? 10
   const isAvailable = currentStock > 0
   const enableCustomizer = (product as any)?.enableCustomizer ?? true
 
+  const basePriceCents =
+    typeof currentVariant?.price === 'number'
+      ? currentVariant.price
+      : Number(priceFromJSON(product.priceJSON, 1, true)) || 0
+
+  const petSurchargeCents = customDesign?.petSurcharge || 0
+  const totalPriceCents = basePriceCents + petSurchargeCents
+
   useEffect(() => {
     if (product?.id) {
-      const priceVal =
-        typeof currentVariant?.price === 'number'
-          ? currentVariant.price
-          : Number(priceFromJSON(product.priceJSON, 1, true)) || 0
-
       trackEvent({
         name: 'view_item',
         params: {
           item_id: product.id,
           item_name: product.title,
-          price: priceVal,
+          price: totalPriceCents,
           category:
             categories?.[0] && typeof categories[0] === 'object' ? categories[0].title : undefined,
         },
       })
     }
-  }, [product?.id, trackEvent])
+  }, [product?.id, totalPriceCents, trackEvent])
 
   return (
     <Gutter className={classes.productHero}>
@@ -83,6 +89,25 @@ export const ProductHero: React.FC<{
         </div>
 
         {hasVariants && (
+          <div className={classes.orderModeTabs}>
+            <button
+              type="button"
+              className={orderMode === 'single' ? classes.active : ''}
+              onClick={() => setOrderMode('single')}
+            >
+              🛍️ Mua lẻ (Single)
+            </button>
+            <button
+              type="button"
+              className={orderMode === 'bulk' ? classes.active : ''}
+              onClick={() => setOrderMode('bulk')}
+            >
+              👥 Bảng đặt sỉ / Đội nhóm (Matrix)
+            </button>
+          </div>
+        )}
+
+        {hasVariants && orderMode === 'single' && (
           <div className={classes.variantsSection}>
             <label>Select Option:</label>
             <div className={classes.variantList}>
@@ -119,10 +144,14 @@ export const ProductHero: React.FC<{
         <Price
           product={product}
           button={false}
-          priceOverride={
-            typeof currentVariant?.price === 'number' ? currentVariant.price : undefined
-          }
+          priceOverride={totalPriceCents > 0 ? totalPriceCents : undefined}
         />
+
+        {petSurchargeCents > 0 && (
+          <p style={{ fontSize: '13px', color: 'var(--theme-brand, #6c4cf1)', marginTop: '-8px', fontWeight: 600 }}>
+            Đã bao gồm phụ phí in PET: +${(petSurchargeCents / 100).toFixed(2)}
+          </p>
+        )}
 
         <div className={classes.description}>
           <h6>Description</h6>
@@ -133,18 +162,34 @@ export const ProductHero: React.FC<{
           <PodCustomizer product={product} onDesignChange={design => setCustomDesign(design)} />
         )}
 
-        <AddToCartButton
-          product={product}
-          sku={currentVariant?.sku}
-          variantTitle={currentVariant?.title}
-          customDesignUrl={customDesign?.artworkUrl}
-          customText={customDesign?.customText}
-          fabricJsonFront={customDesign?.fabricJsonFront}
-          fabricJsonBack={customDesign?.fabricJsonBack}
-          className={classes.addToCartButton}
-          appearance={isAvailable ? 'primary' : 'secondary'}
-          disabled={!isAvailable}
-        />
+        {hasVariants && orderMode === 'bulk' ? (
+          <BulkOrderMatrix
+            product={product}
+            customDesignUrl={customDesign?.artworkUrl}
+            customText={customDesign?.customText}
+            fabricJsonFront={customDesign?.fabricJsonFront}
+            fabricJsonBack={customDesign?.fabricJsonBack}
+            petPrintSize={customDesign?.petPrintSize}
+            petSurcharge={customDesign?.petSurcharge}
+          />
+        ) : (
+          <AddToCartButton
+            product={product}
+            sku={currentVariant?.sku}
+            variantTitle={currentVariant?.title}
+            customDesignUrl={customDesign?.artworkUrl}
+            customText={customDesign?.customText}
+            fabricJsonFront={customDesign?.fabricJsonFront}
+            fabricJsonBack={customDesign?.fabricJsonBack}
+            petPrintSize={customDesign?.petPrintSize}
+            petSurcharge={customDesign?.petSurcharge}
+            className={classes.addToCartButton}
+            appearance={isAvailable ? 'primary' : 'secondary'}
+            disabled={!isAvailable}
+          />
+        )}
+
+        <DeliveryEstimator showGuarantee={true} />
 
         <div className={classes.guaranteeBadge}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

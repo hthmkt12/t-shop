@@ -262,6 +262,63 @@
   }
 }
 
+.dpiBadgeContainer {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: var(--pod-radius-sm, 6px);
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+
+  &.dpi_good {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+  }
+
+  &.dpi_warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+  }
+
+  &.dpi_poor {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+  }
+}
+
+.dpiHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dpiIcon {
+  font-size: 1rem;
+}
+
+.dpiTitle {
+  font-weight: 600;
+}
+
+.dpiValue {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.dpiRecommendation {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
 .sliderRow {
   display: flex;
   align-items: center;
@@ -317,4 +374,57 @@
     border-color: var(--theme-brand);
     transform: scale(1.15);
   }
+}
+
+.printSizeGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.printSizeBtn {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  background: var(--pod-surface-raised, #f8fafc);
+  border: 1px solid var(--pod-border, #e2e8f0);
+  border-radius: var(--pod-radius-sm, 6px);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--theme-brand, #6c4cf1);
+    background: var(--pod-primary-50, #f5f3ff);
+  }
+
+  &.activePrintSize {
+    border-color: var(--theme-brand, #6c4cf1);
+    background: var(--pod-primary-50, #f5f3ff);
+    box-shadow: 0 0 0 1px var(--theme-brand, #6c4cf1);
+  }
+}
+
+.printSizeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  strong {
+    font-size: 0.88rem;
+    color: var(--pod-ink, #0f172a);
+  }
+}
+
+.printSizePrice {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--theme-brand, #6c4cf1);
+}
+
+.printSizeDesc {
+  font-size: 0.78rem;
+  color: var(--theme-text-muted, #64748b);
 }

@@ -23,6 +23,8 @@ export const AddToCartButton: React.FC<{
   customText?: string
   fabricJsonFront?: string
   fabricJsonBack?: string
+  petPrintSize?: string
+  petSurcharge?: number
   disabled?: boolean
 }> = props => {
   const {
@@ -36,6 +38,8 @@ export const AddToCartButton: React.FC<{
     customText,
     fabricJsonFront,
     fabricJsonBack,
+    petPrintSize,
+    petSurcharge,
     disabled = false,
   } = props
 
@@ -97,6 +101,8 @@ export const AddToCartButton: React.FC<{
                   customText,
                   fabricJsonFront,
                   fabricJsonBack,
+                  petPrintSize,
+                  petSurcharge,
                 } as any)
 
                 setShowToast(true)
