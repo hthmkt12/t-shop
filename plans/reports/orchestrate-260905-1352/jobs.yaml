@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-compose-spec
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Audit docker-compose.yml and deployment scripts for Linux staging readiness, verifying env variables, network bridges, and volumes."
+    timeout: 5m
+    expected_output: "Evaluation report of docker-compose staging configuration."
+
+  - id: job-2-template-spec-docs
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Review pod-print-templates.ts specifications and draft a supplier inquiry checklist for physical production dimensions."
+    timeout: 5m
+    expected_output: "Supplier checklist for physical POD print specs and integration steps."

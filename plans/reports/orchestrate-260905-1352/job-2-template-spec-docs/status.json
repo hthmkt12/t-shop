@@ -1,0 +1,15 @@
+{
+  "id": "job-2-template-spec-docs",
+  "runtime": "internal",
+  "model": "fable",
+  "agent": "planner",
+  "task": "review",
+  "capabilityTier": "C1",
+  "riskTier": "R0",
+  "status": "success",
+  "exitCode": 0,
+  "durationMs": 850,
+  "timedOut": false,
+  "attempts": 1,
+  "worktree": null
+}
