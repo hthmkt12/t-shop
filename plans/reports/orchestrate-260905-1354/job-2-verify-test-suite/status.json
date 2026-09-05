@@ -1,0 +1,15 @@
+{
+  "id": "job-2-verify-test-suite",
+  "runtime": "internal",
+  "model": "fable",
+  "agent": "tester",
+  "task": "test",
+  "capabilityTier": "C2",
+  "riskTier": "R0",
+  "status": "success",
+  "exitCode": 0,
+  "durationMs": 4200,
+  "timedOut": false,
+  "attempts": 1,
+  "worktree": null
+}

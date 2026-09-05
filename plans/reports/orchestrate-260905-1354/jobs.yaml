@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-docker-compose-fix
+    runtime: internal
+    task: fix
+    cwd: F:/t-shop
+    prompt: "Update docker-compose.yml payload service to build from Dockerfile with native Alpine dependencies rather than raw node:18-alpine."
+    timeout: 5m
+    expected_output: "Patched docker-compose.yml and verification report."
+
+  - id: job-2-verify-test-suite
+    runtime: internal
+    task: test
+    cwd: F:/t-shop
+    prompt: "Run complete test:pod suite and verify-batch-zip-export.js to ensure zero regressions."
+    timeout: 5m
+    expected_output: "Test suite execution output and pass confirmation."

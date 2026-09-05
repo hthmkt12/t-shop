@@ -1,0 +1,15 @@
+{
+  "id": "job-1-docker-compose-fix",
+  "runtime": "internal",
+  "model": "fable",
+  "agent": "fullstack-developer",
+  "task": "fix",
+  "capabilityTier": "C2",
+  "riskTier": "R1",
+  "status": "success",
+  "exitCode": 0,
+  "durationMs": 850,
+  "timedOut": false,
+  "attempts": 1,
+  "worktree": null
+}
