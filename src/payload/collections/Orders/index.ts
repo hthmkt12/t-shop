@@ -139,6 +139,24 @@ export const Orders: CollectionConfig = {
           type: 'text',
         },
         {
+          name: 'fabricJsonFront',
+          label: 'Design Layout JSON (Front)',
+          type: 'textarea',
+          admin: {
+            description: 'Fabric.js canvas JSON for front side — used by print-render pipeline, not shown to customer',
+            readOnly: true,
+          },
+        },
+        {
+          name: 'fabricJsonBack',
+          label: 'Design Layout JSON (Back)',
+          type: 'textarea',
+          admin: {
+            description: 'Fabric.js canvas JSON for back side — used by print-render pipeline, not shown to customer',
+            readOnly: true,
+          },
+        },
+        {
           name: 'customDesignPreview',
           type: 'ui',
           admin: {

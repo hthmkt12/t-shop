@@ -25,6 +25,7 @@ import { createPaymentIntent } from './endpoints/create-payment-intent'
 import { customersProxy } from './endpoints/customers'
 import { exportProductionBatch } from './endpoints/export-production-batch'
 import { productsProxy } from './endpoints/products'
+import { renderPodPrint } from './endpoints/render-pod-print'
 import { seed } from './endpoints/seed'
 import { trackOrder } from './endpoints/track-order'
 import { Footer } from './globals/Footer'
@@ -80,6 +81,11 @@ export default buildConfig({
             [path.resolve(__dirname, 'endpoints/seed')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/track-order')]: mockModulePath,
             [path.resolve(__dirname, 'endpoints/export-production-batch')]: mockModulePath,
+            [path.resolve(__dirname, 'endpoints/render-pod-print')]: mockModulePath,
+            fabric: mockModulePath,
+            sharp: mockModulePath,
+            canvas: mockModulePath,
+            archiver: mockModulePath,
             stripe: mockModulePath,
             express: mockModulePath,
           },
@@ -162,6 +168,11 @@ export default buildConfig({
       path: '/export-production-batch',
       method: 'get',
       handler: exportProductionBatch,
+    },
+    {
+      path: '/render-pod-print',
+      method: 'post',
+      handler: renderPodPrint,
     },
   ],
   plugins: [

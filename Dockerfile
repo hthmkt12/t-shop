@@ -1,8 +1,24 @@
 FROM node:20-alpine AS base
 
-# Install dependencies only when needed
+# Install system dependencies required for native node-canvas and sharp on Alpine
+RUN apk add --no-cache \
+    libc6-compat \
+    cairo \
+    pango \
+    jpeg \
+    giflib \
+    librsvg
+
+# Install build dependencies for compiling node-canvas
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache \
+    build-base \
+    cairo-dev \
+    pango-dev \
+    jpeg-dev \
+    giflib-dev \
+    librsvg-dev \
+    python3
 WORKDIR /app
 
 COPY package.json yarn.lock ./

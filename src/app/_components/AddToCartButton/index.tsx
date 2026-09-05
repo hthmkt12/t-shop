@@ -21,6 +21,8 @@ export const AddToCartButton: React.FC<{
   variantTitle?: string
   customDesignUrl?: string
   customText?: string
+  fabricJsonFront?: string
+  fabricJsonBack?: string
   disabled?: boolean
 }> = props => {
   const {
@@ -32,6 +34,8 @@ export const AddToCartButton: React.FC<{
     variantTitle,
     customDesignUrl,
     customText,
+    fabricJsonFront,
+    fabricJsonBack,
     disabled = false,
   } = props
 
@@ -91,6 +95,8 @@ export const AddToCartButton: React.FC<{
                   variantTitle,
                   customDesignUrl,
                   customText,
+                  fabricJsonFront,
+                  fabricJsonBack,
                 } as any)
 
                 setShowToast(true)

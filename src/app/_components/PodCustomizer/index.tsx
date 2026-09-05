@@ -1,14 +1,16 @@
 'use client'
 
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Media, Product } from '../../../payload/payload-types'
 import { useAnalytics } from '../../_providers/Analytics'
 import classes from './index.module.scss'
+import { useFabricCanvas } from './use-fabric-canvas'
 
 export type CustomDesignData = {
   artworkUrl?: string
   artworkName?: string
+  // Legacy fields kept for backward compatibility with CartItem / Orders schema
   scale: number
   rotation: number
   positionX?: number
@@ -16,6 +18,14 @@ export type CustomDesignData = {
   customText?: string
   textColor: string
   activeSide?: 'front' | 'back'
+  // Fabric.js extended fields (active side only — kept for back-compat)
+  fabricJson?: string
+  previewDataUrl?: string
+  // Fabric.js per-side fields — use these for cart/order persistence, not the two above
+  fabricJsonFront?: string
+  fabricJsonBack?: string
+  previewDataUrlFront?: string
+  previewDataUrlBack?: string
 }
 
 type Props = {
@@ -28,60 +38,89 @@ const TEXT_COLORS = ['#131118', '#FFFFFF', '#6C4CF1', '#FF5C8A', '#FFA820', '#10
 
 export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesignChange }) => {
   const { trackEvent } = useAnalytics()
+
   const [artworkUrl, setArtworkUrl] = useState<string | null>(null)
   const [artworkName, setArtworkName] = useState<string>('')
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
-  const [scale, setScale] = useState<number>(100)
-  const [rotation, setRotation] = useState<number>(0)
-  const [posX, setPosX] = useState<number>(0)
-  const [posY, setPosY] = useState<number>(0)
-  const [activeSide, setActiveSide] = useState<'front' | 'back'>('front')
   const [customText, setCustomText] = useState<string>('')
   const [textColor, setTextColor] = useState<string>('#131118')
-  const [isDragging, setIsDragging] = useState<boolean>(false)
-  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [activeSide, setActiveSide] = useState<'front' | 'back'>('front')
 
-  const updateParent = (
-    nextUrl: string | null,
-    nextName: string,
-    nextScale: number,
-    nextRot: number,
-    nextText: string,
-    nextColor: string,
-    nextPosX: number = posX,
-    nextPosY: number = posY,
-    nextSide: 'front' | 'back' = activeSide,
-  ) => {
-    if (!onDesignChange) return
-    if (!nextUrl && !nextText.trim()) {
-      onDesignChange(null)
-      return
+  // Persist per-side canvas JSON so switching sides restores state
+  const sideJsonRef = useRef<{ front: string; back: string }>({ front: '{}', back: '{}' })
+
+  // Called by Fabric canvas on every object:modified/added/removed
+  const sideDataUrlRef = useRef<{ front: string; back: string }>({ front: '', back: '' })
+
+  const handleCanvasModified = useCallback(
+    (json: string, dataUrl: string) => {
+      sideJsonRef.current[activeSide] = json
+      sideDataUrlRef.current[activeSide] = dataUrl
+
+      if (!onDesignChange) return
+      const hasContent = json !== '{}' && json !== '{"objects":[]}'
+      const otherSide = activeSide === 'front' ? 'back' : 'front'
+      const otherHasContent =
+        sideJsonRef.current[otherSide] !== '{}' && sideJsonRef.current[otherSide] !== '{"objects":[]}'
+      if (!hasContent && !otherHasContent && !artworkUrl && !customText.trim()) {
+        onDesignChange(null)
+        return
+      }
+
+      trackEvent({
+        name: 'customize_pod',
+        params: {
+          item_id: product.id,
+          item_name: product.title,
+          has_artwork: Boolean(artworkUrl),
+          has_text: Boolean(customText.trim()),
+          text_length: customText.trim().length,
+        },
+      })
+
+      onDesignChange({
+        artworkUrl: artworkUrl || undefined,
+        artworkName: artworkName || undefined,
+        // Legacy scalar fields — Fabric now owns actual geometry
+        scale: 100,
+        rotation: 0,
+        customText: customText.trim() || undefined,
+        textColor,
+        activeSide,
+        fabricJson: json,
+        previewDataUrl: dataUrl,
+        fabricJsonFront: sideJsonRef.current.front,
+        fabricJsonBack: sideJsonRef.current.back,
+        previewDataUrlFront: sideDataUrlRef.current.front,
+        previewDataUrlBack: sideDataUrlRef.current.back,
+      })
+    },
+    [activeSide, artworkUrl, artworkName, customText, textColor, onDesignChange, product, trackEvent],
+  )
+
+  const fabricHandle = useFabricCanvas(handleCanvasModified)
+
+  // When switching sides: save current JSON, load the other side's JSON
+  const handleSideToggle = async (side: 'front' | 'back') => {
+    if (side === activeSide) return
+    // Save current side
+    sideJsonRef.current[activeSide] = fabricHandle.exportJson()
+    setActiveSide(side)
+    const targetJson = sideJsonRef.current[side]
+    if (targetJson && targetJson !== '{}' && targetJson !== '{"objects":[]}') {
+      await fabricHandle.loadJson(targetJson)
+    } else {
+      fabricHandle.clearCanvas()
     }
-
-    trackEvent({
-      name: 'customize_pod',
-      params: {
-        item_id: product.id,
-        item_name: product.title,
-        has_artwork: Boolean(nextUrl),
-        has_text: Boolean(nextText.trim()),
-        text_length: nextText.trim().length,
-      },
-    })
-
-    onDesignChange({
-      artworkUrl: nextUrl || undefined,
-      artworkName: nextName || undefined,
-      scale: nextScale,
-      rotation: nextRot,
-      positionX: nextPosX,
-      positionY: nextPosY,
-      customText: nextText.trim() || undefined,
-      textColor: nextColor,
-      activeSide: nextSide,
-    })
   }
+
+  // Sync text color into canvas when it changes
+  useEffect(() => {
+    if (fabricHandle.isReady && customText) {
+      fabricHandle.updateTextColor(textColor)
+    }
+  }, [textColor, fabricHandle, customText])
 
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -90,10 +129,11 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     setUploadError(null)
     setIsUploading(true)
 
-    // Local instant preview
-    const localPreviewUrl = URL.createObjectURL(file)
-    setArtworkUrl(localPreviewUrl)
+    // Local blob URL for instant canvas preview while upload is in flight
+    const localUrl = URL.createObjectURL(file)
+    setArtworkUrl(localUrl)
     setArtworkName(file.name)
+    await fabricHandle.addImage(localUrl)
 
     try {
       const formData = new FormData()
@@ -105,20 +145,17 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
         body: formData,
       })
 
-      if (!res.ok) {
-        throw new Error('Failed to upload artwork to server')
-      }
+      if (!res.ok) throw new Error('Failed to upload artwork to server')
 
       const json = await res.json()
-      const serverUrl = json?.doc?.url || localPreviewUrl
-
+      const serverUrl: string = json?.doc?.url || localUrl
       setArtworkUrl(serverUrl)
-      updateParent(serverUrl, file.name, scale, rotation, customText, textColor)
+      // Replace canvas image with server URL so fabricJson references a stable URL
+      await fabricHandle.addImage(serverUrl)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error uploading file'
       setUploadError(msg)
-      // Still allow client preview if offline/mock
-      updateParent(localPreviewUrl, file.name, scale, rotation, customText, textColor)
+      // Keep local blob URL in canvas — still usable for preview
     } finally {
       setIsUploading(false)
     }
@@ -128,95 +165,24 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
     setArtworkUrl(null)
     setArtworkName('')
     setUploadError(null)
-    setPosX(0)
-    setPosY(0)
-    updateParent(null, '', scale, rotation, customText, textColor, 0, 0, activeSide)
-  }
-
-  const handleScaleChange = (val: number) => {
-    setScale(val)
-    updateParent(
-      artworkUrl,
-      artworkName,
-      val,
-      rotation,
-      customText,
-      textColor,
-      posX,
-      posY,
-      activeSide,
-    )
-  }
-
-  const handleRotationChange = (val: number) => {
-    setRotation(val)
-    updateParent(artworkUrl, artworkName, scale, val, customText, textColor, posX, posY, activeSide)
+    fabricHandle.clearCanvas()
+    if (onDesignChange) onDesignChange(null)
   }
 
   const handleTextChange = (text: string) => {
     setCustomText(text)
-    updateParent(artworkUrl, artworkName, scale, rotation, text, textColor, posX, posY, activeSide)
+    if (!fabricHandle.isReady) return
+    if (text.trim()) {
+      fabricHandle.addText(text.trim(), textColor)
+    } else {
+      // Remove all text layers when field is cleared
+      fabricHandle.addText('', textColor) // addText guards on empty string
+    }
   }
 
   const handleColorChange = (color: string) => {
     setTextColor(color)
-    updateParent(
-      artworkUrl,
-      artworkName,
-      scale,
-      rotation,
-      customText,
-      color,
-      posX,
-      posY,
-      activeSide,
-    )
-  }
-
-  const handleSideToggle = (side: 'front' | 'back') => {
-    setActiveSide(side)
-    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, posX, posY, side)
-  }
-
-  // Pointer / Touch Drag Handler for Artwork Placement
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (!artworkUrl && !customText) return
-    setIsDragging(true)
-    setDragStart({ x: e.clientX - posX, y: e.clientY - posY })
-    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
-  }
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return
-    const newX = Math.max(-60, Math.min(60, e.clientX - dragStart.x))
-    const newY = Math.max(-60, Math.min(60, e.clientY - dragStart.y))
-    setPosX(newX)
-    setPosY(newY)
-  }
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDragging) return
-    setIsDragging(false)
-    try {
-      ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
-    } catch {}
-    updateParent(
-      artworkUrl,
-      artworkName,
-      scale,
-      rotation,
-      customText,
-      textColor,
-      posX,
-      posY,
-      activeSide,
-    )
-  }
-
-  const handleResetPosition = () => {
-    setPosX(0)
-    setPosY(0)
-    updateParent(artworkUrl, artworkName, scale, rotation, customText, textColor, 0, 0, activeSide)
+    fabricHandle.updateTextColor(color)
   }
 
   const metaImage = product?.meta?.image as Media | undefined
@@ -255,7 +221,7 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
       </div>
 
       <div className={classes.stageContainer}>
-        {/* Mockup Preview Canvas */}
+        {/* Mockup + Fabric canvas overlay */}
         <div className={classes.previewStage}>
           {fallbackImage ? (
             <img src={fallbackImage} alt={product.title} className={classes.mockupBase} />
@@ -265,71 +231,52 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
             </div>
           )}
 
-          {/* Printable Design Area with Drag Support */}
-          <div
-            className={[classes.printAreaBox, (artworkUrl || customText) && classes.interactiveArea]
-              .filter(Boolean)
-              .join(' ')}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            style={{
-              cursor: artworkUrl || customText ? (isDragging ? 'grabbing' : 'grab') : 'default',
-              touchAction: 'none',
-            }}
+          {/* Safe zone indicator (static SVG) */}
+          <svg
+            className={classes.safeZoneOverlay}
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
-            {artworkUrl && (
-              <img
-                src={artworkUrl}
-                alt="Uploaded Artwork"
-                className={classes.uploadedImage}
-                style={{
-                  transform: `translate3d(${posX}px, ${posY}px, 0) scale(${
-                    scale / 100
-                  }) rotate(${rotation}deg)`,
-                }}
-                draggable={false}
-              />
-            )}
-            {customText && (
-              <span
-                className={classes.customTextLayer}
-                style={{
-                  color: textColor,
-                  fontSize: `${Math.max(12, Math.round((scale / 100) * 16))}px`,
-                  transform: `translate3d(${posX}px, ${posY}px, 0)`,
-                }}
-              >
-                {customText}
-              </span>
-            )}
-            {!artworkUrl && !customText && (
-              <span
-                style={{
-                  fontSize: '0.75rem',
-                  color: 'var(--theme-text-muted)',
-                  textAlign: 'center',
-                }}
-              >
-                Print Area ({activeSide})
-              </span>
+            <rect
+              x="28"
+              y="22"
+              width="44"
+              height="52"
+              fill="none"
+              stroke="rgba(108,76,241,0.4)"
+              strokeWidth="0.8"
+              strokeDasharray="3 2"
+              rx="1"
+            />
+          </svg>
+
+          {/* Fabric.js canvas — absolute, covers print zone */}
+          <div className={classes.canvasWrapper}>
+            <canvas ref={fabricHandle.canvasEl} />
+            {!fabricHandle.isReady && (
+              <div className={classes.canvasLoading}>
+                <span>Loading canvas…</span>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Customization Controls */}
+        {/* Controls panel */}
         <div className={classes.controlsPanel}>
-          {(posX !== 0 || posY !== 0) && (
+          {fabricHandle.isReady && (artworkUrl || customText) && (
             <div className={classes.dragStatusNotice}>
-              <span>
-                ✋ Dragged: X: {posX}px, Y: {posY}px
-              </span>
-              <button type="button" onClick={handleResetPosition} className={classes.resetPosBtn}>
-                Reset Center
+              <span>✋ Click objects on canvas to move, resize, rotate</span>
+              <button
+                type="button"
+                onClick={fabricHandle.deleteSelected}
+                className={classes.resetPosBtn}
+              >
+                Delete Selected
               </button>
             </div>
           )}
+
           <div className={classes.controlGroup}>
             <label>1. Upload Artwork / Design (PNG/JPG)</label>
             <div className={classes.uploadBtnRow}>
@@ -356,38 +303,6 @@ export const PodCustomizer: React.FC<Props> = ({ product, baseImageUrl, onDesign
               </span>
             )}
           </div>
-
-          {artworkUrl && (
-            <>
-              <div className={classes.controlGroup}>
-                <label>Scale: {scale}%</label>
-                <div className={classes.sliderRow}>
-                  <input
-                    type="range"
-                    min={40}
-                    max={160}
-                    value={scale}
-                    onChange={e => handleScaleChange(Number(e.target.value))}
-                  />
-                  <span>{scale}%</span>
-                </div>
-              </div>
-
-              <div className={classes.controlGroup}>
-                <label>Rotation: {rotation}°</label>
-                <div className={classes.sliderRow}>
-                  <input
-                    type="range"
-                    min={-180}
-                    max={180}
-                    value={rotation}
-                    onChange={e => handleRotationChange(Number(e.target.value))}
-                  />
-                  <span>{rotation}°</span>
-                </div>
-              </div>
-            </>
-          )}
 
           <div className={classes.controlGroup}>
             <label>2. Add Custom Text (Optional)</label>

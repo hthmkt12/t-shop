@@ -152,6 +152,16 @@ const Users: CollectionConfig = {
               type: 'text',
             },
             {
+              name: 'fabricJsonFront',
+              label: 'Design Layout JSON (Front)',
+              type: 'textarea',
+            },
+            {
+              name: 'fabricJsonBack',
+              label: 'Design Layout JSON (Back)',
+              type: 'textarea',
+            },
+            {
               name: 'quantity',
               type: 'number',
               min: 0,

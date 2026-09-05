@@ -42,10 +42,14 @@
     "@payloadcms/richtext-slate": "^1.0.0",
     "@stripe/react-stripe-js": "^1.16.3",
     "@stripe/stripe-js": "^1.46.0",
+    "@types/archiver": "^6.0.3",
+    "@types/fabric": "^5.3.11",
+    "archiver": "^7.0.1",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "escape-html": "^1.0.3",
     "express": "^4.19.2",
+    "fabric": "^7.4.0",
     "next": "13.5.11",
     "payload": "^2.0.7",
     "payload-admin-bar": "^1.0.6",
@@ -54,6 +58,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "7.45.4",
     "react-router-dom": "5.3.4",
+    "sharp": "^0.35.4",
     "stripe": "^10.2.0"
   },
   "devDependencies": {

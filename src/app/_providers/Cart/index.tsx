@@ -55,6 +55,8 @@ const flattenCart = (cart: User['cart']): User['cart'] => ({
         variantTitle: (item as any)?.variantTitle || undefined,
         customDesignUrl: (item as any)?.customDesignUrl || undefined,
         customText: (item as any)?.customText || undefined,
+        fabricJsonFront: (item as any)?.fabricJsonFront || undefined,
+        fabricJsonBack: (item as any)?.fabricJsonBack || undefined,
       }
     })
     .filter(Boolean) as CartItem[],
@@ -101,7 +103,16 @@ export const CartProvider = props => {
         if (parsedCart?.items && parsedCart?.items?.length > 0) {
           const initialCart = await Promise.all(
             parsedCart.items.map(
-              async ({ product, quantity, sku, variantTitle, customDesignUrl, customText }) => {
+              async ({
+                product,
+                quantity,
+                sku,
+                variantTitle,
+                customDesignUrl,
+                customText,
+                fabricJsonFront,
+                fabricJsonBack,
+              }) => {
                 const res = await fetch(
                   `${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${product}`,
                 )
@@ -113,6 +124,8 @@ export const CartProvider = props => {
                   variantTitle,
                   customDesignUrl,
                   customText,
+                  fabricJsonFront,
+                  fabricJsonBack,
                 }
               },
             ),

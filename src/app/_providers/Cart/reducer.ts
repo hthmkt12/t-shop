@@ -5,6 +5,8 @@ export type CartItem = CartItems[0] & {
   variantTitle?: string
   customDesignUrl?: string
   customText?: string
+  fabricJsonFront?: string
+  fabricJsonBack?: string
 }
 
 interface CartType {

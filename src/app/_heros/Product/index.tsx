@@ -138,6 +138,8 @@ export const ProductHero: React.FC<{
           variantTitle={currentVariant?.title}
           customDesignUrl={customDesign?.artworkUrl}
           customText={customDesign?.customText}
+          fabricJsonFront={customDesign?.fabricJsonFront}
+          fabricJsonBack={customDesign?.fabricJsonBack}
           className={classes.addToCartButton}
           appearance={isAvailable ? 'primary' : 'secondary'}
           disabled={!isAvailable}

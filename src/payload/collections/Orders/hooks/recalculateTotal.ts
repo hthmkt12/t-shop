@@ -92,6 +92,8 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
       const sku = item?.sku
       const customDesignUrl = item?.customDesignUrl
       const customText = item?.customText
+      const fabricJsonFront = item?.fabricJsonFront
+      const fabricJsonBack = item?.fabricJsonBack
       let unitPrice: number | null = null
       let variantTitle = item?.variantTitle
 
@@ -140,6 +142,8 @@ export const recalculateTotal: BeforeChangeHook = async ({ data, req, operation 
         variantTitle: variantTitle || undefined,
         customDesignUrl: customDesignUrl || undefined,
         customText: customText || undefined,
+        fabricJsonFront: fabricJsonFront || undefined,
+        fabricJsonBack: fabricJsonBack || undefined,
         quantity,
         price: unitPrice ?? 0,
       }
