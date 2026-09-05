@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-git-remote-push-dryrun
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Verify git push --dry-run fork main and remote synchronization status."
+    timeout: 5m
+    expected_output: "Dry-run push verification report."
+
+  - id: job-2-final-preflight-summary
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Compile final preflight delivery summary and user action gates."
+    timeout: 5m
+    expected_output: "Final preflight delivery report."
