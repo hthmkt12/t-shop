@@ -57,7 +57,7 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
       productionNotes: string
     }> = []
 
-    for (const order of ordersQuery.docs) {
+    for (const order of ordersQuery.docs as any[]) {
       const address = order.shippingAddress
       const fullAddress = address
         ? [
@@ -72,7 +72,7 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
             .join(', ')
         : 'N/A'
 
-      const items = order.items || []
+      const items = (order.items as any[]) || []
       items.forEach((item, index) => {
         const productObj = typeof item.product === 'object' ? (item.product as any) : null
         const productTitle = productObj?.title || 'POD Product'
@@ -95,7 +95,7 @@ export const exportProductionBatch: PayloadHandler = async (req, res): Promise<v
           customDesignUrl: item.customDesignUrl || '',
           fabricJsonFront: (item as any).fabricJsonFront || undefined,
           fabricJsonBack: (item as any).fabricJsonBack || undefined,
-          productionNotes: order.productionNotes || '',
+          productionNotes: String(order.productionNotes || ''),
         })
       })
     }
