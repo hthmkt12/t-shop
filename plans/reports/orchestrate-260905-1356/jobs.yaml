@@ -1,0 +1,18 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-git-remote-audit
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Audit git remote configuration, tracking branches, and ahead commit log ready for push."
+    timeout: 5m
+    expected_output: "Git tracking summary and commit list."
+
+  - id: job-2-release-tag-prep
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Prepare release tag notes for v1.1.0-pod-render summarizing hybrid canvas and 300DPI batch render export."
+    timeout: 5m
+    expected_output: "Release tag changelog and release notes."
