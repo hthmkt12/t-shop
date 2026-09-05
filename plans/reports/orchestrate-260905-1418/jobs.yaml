@@ -1,0 +1,10 @@
+version: 1
+concurrency: 1
+jobs:
+  - id: job-1-final-handoff-audit
+    runtime: internal
+    task: review
+    cwd: F:/t-shop
+    prompt: "Final handoff audit: verify branch status, tags, and production delivery artifacts."
+    timeout: 5m
+    expected_output: "Final handoff audit report."
