@@ -1,26 +1,38 @@
 @import '../../_css/common';
 
 .card {
-  border-radius: var(--pod-radius-md);
+  border-radius: 8px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--theme-surface-raised, #ffffff);
-  border: 1px solid var(--pod-border);
+  background-color: var(--color-surface-bg, #ffffff);
+  border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
   overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+  text-decoration: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 0, 0, 0.16);
+    transform: translateY(-4px);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.06);
 
     img {
-      transform: scale(1.025);
+      transform: scale(1.035);
     }
   }
 
   img {
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+:global([data-theme="dark"]) .card {
+  background-color: var(--color-surface-bg, #0a0a0a);
+  border-color: rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -99,12 +111,17 @@
   text-decoration: none;
   display: block;
   position: relative;
-  min-height: 262px;
-  background: var(--pod-gradient-soft);
+  min-height: 280px;
+  background: var(--color-surface-subtle, #f5f5f7);
+  overflow: hidden;
+}
+
+:global([data-theme="dark"]) .mediaWrapper {
+  background: #141416;
 }
 
 .image {
-  padding: 24px;
+  padding: 28px;
   object-fit: contain;
   aspect-ratio: 1/1;
   max-width: 100%;
