@@ -1,39 +1,44 @@
-version: '3.8'
-
 services:
-  app:
+  payload:
     build:
       context: .
       dockerfile: Dockerfile
-    image: t-shop-pod:staging
+      target: runner
     restart: always
     ports:
-      - '3000:3000'
-    environment:
-      PORT: 3000
-      PAYLOAD_PUBLIC_SERVER_URL: http://localhost:3000
-      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
-      DATABASE_URI: mongodb://mongo:27017/payload-template-ecommerce
-      PAYLOAD_SECRET: staging_super_secret_payload_key_2026_pod
-      PAYLOAD_PUBLIC_DRAFT_SECRET: staging_draft_secret_key
-      NEXT_PRIVATE_DRAFT_SECRET: staging_draft_secret_key
-      REVALIDATION_KEY: staging_revalidation_key
-      NEXT_PRIVATE_REVALIDATION_KEY: staging_revalidation_key
-      NEXT_PUBLIC_IS_LIVE: 'false'
+      - '127.0.0.1:3000:3000'
     volumes:
       - media_data:/app/media
     depends_on:
       - mongo
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URI=mongodb://mongo:27017/payload-template-ecommerce
+    env_file:
+      - .env.production
+    networks:
+      - internal_net
 
   mongo:
-    image: mongo:7
+    image: mongo:6-jammy
     restart: always
-    environment:
-      MONGO_INITDB_DATABASE: payload-template-ecommerce
+    command:
+      - --storageEngine=wiredTiger
     volumes:
       - mongo_data:/data/db
+    networks:
+      - internal_net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   mongo_data:
   media_data:
 
+networks:
+  internal_net:
+    driver: bridge
