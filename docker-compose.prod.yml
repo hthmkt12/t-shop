@@ -21,7 +21,7 @@ services:
       - internal_net
 
   mongo:
-    image: mongo:6-jammy
+    image: mongo:7-jammy
     restart: always
     command:
       - --storageEngine=wiredTiger
