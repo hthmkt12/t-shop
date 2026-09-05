@@ -10,17 +10,20 @@
 
 set -euo pipefail
 
-BACKUP_DIR="/opt/t-shop/backups"
+# Thư mục chứa backup, mặc định theo biến APP_DIR hoặc thư mục hiện tại
+APP_DIR="${APP_DIR:-.}"
+BACKUP_DIR="${APP_DIR}/backups"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_FILE="${BACKUP_DIR}/t-shop-mongo-${TIMESTAMP}.tar.gz"
 RETENTION_DAYS=14
+COMPOSE_FILE="${APP_DIR}/docker-compose.prod.yml"
 
 mkdir -p "$BACKUP_DIR"
 
 echo "[$(date)] Bắt đầu backup database T-Shop..."
 
 # Tạo dump trực tiếp từ container mongo
-docker compose -f /opt/t-shop/docker-compose.prod.yml exec -T mongo \
+docker compose -f "$COMPOSE_FILE" exec -T mongo \
   mongodump --db payload-template-ecommerce --archive --gzip > "$BACKUP_FILE"
 
 echo "[$(date)] Backup thành công: $BACKUP_FILE ($(du -h "$BACKUP_FILE" | cut -f1))"
